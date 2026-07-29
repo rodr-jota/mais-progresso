@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Inter";
+}
+
+#container {
+  display: flex;
+}
+#container #left {
+  width: 50%;
+  padding-top: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#container #left h1 {
+  text-align: center;
+}
+#container #left h1 img {
+  width: 90%;
+}
+#container #left form {
+  width: 100%;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#container #left form #container-inputs {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+#container #left form #container-inputs .inp {
+  width: 100%;
+  padding: 26px 20px;
+  border-radius: 10px;
+  position: relative;
+}
+#container #left form #container-inputs .inp#um {
+  background-image: linear-gradient(to right, #0125f2, #00158c);
+}
+#container #left form #container-inputs .inp#dois {
+  background-image: linear-gradient(to right, #00158c, #0125f2);
+}
+#container #left form #container-inputs .inp::after {
+  content: "";
+  position: absolute;
+  bottom: 13px;
+  display: block;
+  width: 92%;
+  height: 1px;
+  background-color: white;
+}
+#container #left form #container-inputs .inp input {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  color: white;
+  font-size: 18px;
+}
+#container #left form #container-inputs .inp input::placeholder {
+  font-size: 16px;
+  color: white;
+  letter-spacing: -3%;
+}
+button {
+  margin-top: 56px;
+  margin-bottom: 22px;
+  border: none;
+  width: 100%;
+  height: 67px /* tuff */;
+  background-image: linear-gradient(to right, #00158c, #0125f2);
+  border-radius: 10px;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+}
+form > a {
+  text-decoration: none;
+  color: black;
+  letter-spacing: -3%;
+  font-size: 20px;
+}
+#container #right {
+  background-image: url(rota/frontend/assets/fundo.png);
+  width: 50%;
+}
+
+footer {
+  width: 100%;
+  background-color: #00158c;
+  display: flex;
+  align-items: center;
+  padding: 8px 24px;
+}

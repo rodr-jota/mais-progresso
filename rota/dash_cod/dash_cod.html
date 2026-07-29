@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashborad Cordenador</title>
+    <link rel="stylesheet" href="dash_cod.css" />
+  </head>
+  <body>
+    <div id="titulo">
+      <h1>Bem-vindo(a) <br /><strong>Adalci Farias</strong></h1>
+      <img src="../frontend/assets/titulo-logo.png" />
+    </div>
+    <div id="filtro">
+      <ul id="meses">
+        <li id="this">Abr</li>
+        <li>Mai</li>
+        <li>Jun</li>
+        <li>Ago</li>
+        <li>Set</li>
+        <li>Out</li>
+        <li>Nov</li>
+      </ul>
+    </div>
+
+    <div class="notific" id="pr">
+      <strong id="pr-strong">
+        <!-- <img src="../frontend/assets/alert.svg" alt="!" />
+        Lançamento de dados pendente -->
+      </strong>
+      <a
+        id="btn-atualizar-dados-link"
+        href="../frontend/table/table.html"
+        style="text-decoration: none"
+      >
+        <div id="btn-atualizar-dados">Atualizar dados</div>
+      </a>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-track">
+        <div class="card" id="bronze">
+          <div class="container">
+            <div class="btn-prev" style="opacity: 0">
+              <img
+                src="../frontend/assets/arrow.svg"
+                alt=">"
+                style="rotate: 180deg"
+              />
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/broze1.png"
+              alt="Medalha de Bronze"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Bronze</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">0/24</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="prata">
+          <div class="container">
+            <div class="btn-prev">
+              <img
+                src="../frontend/assets/arrow.svg"
+                alt=">"
+                style="rotate: 180deg"
+              />
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/prata.png"
+              alt="Medalha de Prata"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Prata</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled"><span class="contagem">0/3</span></div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="ouro">
+          <div class="container">
+            <div class="btn-prev">
+              <img
+                src="../frontend/assets/arrow.svg"
+                alt=">"
+                style="rotate: 180deg"
+              />
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/ouro.png"
+              alt="Medalha de Ouro"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Ouro</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled"><span class="contagem">0/3</span></div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="platina">
+          <div class="container">
+            <div class="btn-prev">
+              <img
+                src="../frontend/assets/arrow.svg"
+                alt=">"
+                style="rotate: 180deg"
+              />
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/platina.png"
+              alt="Medalha de Platina"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Platina</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">0/3</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="diamante">
+          <div class="container">
+            <div class="btn-prev">
+              <img
+                src="../frontend/assets/arrow.svg"
+                alt=">"
+                style="rotate: 180deg"
+              />
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/diamante.png"
+              alt="Medalha de diamante"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Diamante</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">0/3</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="mestre">
+          <div class="container">
+            <div class="btn-prev">
+              <img
+                src="../frontend/assets/arrow.svg"
+                alt=">"
+                style="rotate: 180deg"
+              />
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/mestre.png"
+              alt="Medalha de mestre"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Mestre</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">0/5</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="lendario">
+          <div class="container">
+            <div class="btn-prev">
+              <img
+                src="../frontend/assets/arrow.svg"
+                alt=">"
+                style="rotate: 180deg"
+              />
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/lendario.png"
+              alt="Medalha de lenda"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Lendário</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">Você chegou ao rank máximo!</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next" style="opacity: 0">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <h2>Escolha uma equipe</h2>
+    <div id="equipes">
+      <span class="equip" id="geral">Geral</span>
+      <span class="equip" id="friboi">Friboi</span>
+      <span class="equip" id="in-nat">In Nat</span>
+      <span class="equip" id="alp">ALP</span>
+      <span class="equip" id="food">Food</span>
+      <span class="equip" id="flora">Flora</span>
+    </div>
+
+    <div class="graphics">
+      <div id="title">
+        <img src="../frontend/assets/que-p-eh-essa.svg" />
+        <strong>Distribuição de ranks - Alunos</strong>
+      </div>
+
+      <div id="plano">
+        <div id="barras">
+          <div class="bar-col" id="col1">
+            <span class="bar-valor" id="valor1"></span>
+            <div class="bar" id="bar1"></div>
+          </div>
+          <div class="bar-col" id="col2">
+            <span class="bar-valor" id="valor2"></span>
+            <div class="bar" id="bar2"></div>
+          </div>
+          <div class="bar-col" id="col3">
+            <span class="bar-valor" id="valor3"></span>
+            <div class="bar" id="bar3"></div>
+          </div>
+          <div class="bar-col" id="col4">
+            <span class="bar-valor" id="valor4"></span>
+            <div class="bar" id="bar4"></div>
+          </div>
+          <div class="bar-col" id="col5">
+            <span class="bar-valor" id="valor5"></span>
+            <div class="bar" id="bar5"></div>
+          </div>
+          <div class="bar-col" id="col6">
+            <span class="bar-valor" id="valor6"></span>
+            <div class="bar" id="bar6"></div>
+          </div>
+          <div class="bar-col" id="col7">
+            <span class="bar-valor" id="valor7"></span>
+            <div class="bar" id="bar7"></div>
+          </div>
+        </div>
+        <div id="eixo-x">
+          <img id="a" src="../frontend/assets/bronze.png" />
+          <img id="b" src="../frontend/assets/prataa.png" />
+          <img id="c" src="../frontend/assets/ouroo.png" />
+          <img id="d" src="../frontend/assets/platinaaa.png" />
+          <img id="e" src="../frontend/assets/diamantee2.png" />
+          <img id="f" src="../frontend/assets/mestree.png" />
+          <img id="g" src="../frontend/assets/lendarioo.png" />
+        </div>
+      </div>
+    </div>
+
+    <div class="notific" id="segundo">
+      <strong id="segundo">
+        <img src="../frontend/assets/rank.png" />
+        Ranking
+      </strong>
+      <div id="btns">
+        <!-- <div class="btn-filtrar" id="segundo">
+          <img src="../frontend/assets/filtrinho.png" alt="Filtro" />
+        </div> -->
+        <div id="btn-exportar-dados">Exportar dados</div>
+      </div>
+
+      <!-- <div id="open-overlay">
+        <strong>Selecione um time</strong>
+        <div id="opcoes">
+          <div class="opcao">
+            <div class="circ"></div>
+            Friboi
+          </div>
+          <div class="opcao">
+            <div class="circ"></div>
+            Flora
+          </div>
+          <div class="opcao">
+            <div class="circ"></div>
+            <a href="pagina.html" style="text-decoration: none; color: inherit"
+              >ALP</a
+            >
+          </div>
+          <div class="opcao">
+            <div class="circ"></div>
+            Food
+          </div>
+          <div class="opcao">
+            <a href="pagina.html">
+              <div class="circ"></div>
+            </a>
+            <a href="pagina.html" style="text-decoration: none; color: inherit"
+              >In Natura</a
+            >
+          </div>
+        </div>
+      </div> -->
+    </div>
+
+    <div id="top-ranking"></div>
+
+    <footer>
+      <a href="#titulo"
+        ><img src="../frontend/assets/image 10.png" alt="Institito J&F"
+      /></a>
+    </footer>
+
+    <script>
+      // ── Carrossel (independente, roda sempre) ──────────────────────────
+      const track = document.querySelector(".slider-track");
+      const cards = document.querySelectorAll(".card");
+      let currentIndex = 0;
+
+      function updateSlider() {
+        const cardWidth = cards[0].getBoundingClientRect().width;
+        track.style.transform = `translateX(-${currentIndex * (cardWidth + 20)}px)`;
+      }
+
+      document.querySelectorAll(".btn-next").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (currentIndex < cards.length - 1) {
+            currentIndex++;
+            updateSlider();
+          }
+        });
+      });
+
+      document.querySelectorAll(".btn-prev").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (currentIndex > 0) {
+            currentIndex--;
+            updateSlider();
+          }
+        });
+      });
+
+      // ── Variável global para armazenar o mês selecionado ──
+      let mesSelecionado = "Abril";
+
+      function getApiBaseUrl() {
+        const host = window.location.hostname;
+        if (host === "localhost" || host === "127.0.0.1") {
+          return "http://localhost:3000";
+        }
+        return "https://back-mais-progresso.onrender.com";
+      }
+
+      const mapaMeses = {
+        ABR: "Abril",
+        MAI: "Maio",
+        JUN: "Junho",
+        AGO: "Agosto",
+        SET: "Setembro",
+        OUT: "Outubro",
+        NOV: "Novembro",
+      };
+      // ── Função para verificar status do mês e atualizar a notificação ──
+      // Possível análise e correção:
+      // 1. O if original era: if (dados.realizado) {...}
+      // 2. O prompt pergunta por que if (dados.concluido) não funcionaria.
+      // 3. Pelo código enviado, está checando corretamente por 'realizado' (dados.realizado).
+      //    Mas se em algum lugar do código você mudou para 'concluido', NÃO irá funcionar,
+      //    pois o back-end retorna { realizado: true }.
+
+      // RESUMO:
+      // - O if só entra se o campo se chamar dados.realizado.
+      // - Se trocar o nome da propriedade (para 'concluido' ou outra), não será verdadeiro.
+      // - Confira o console.log(dados) para garantir que o campo retornado realmente se chama 'realizado'.
+      // - Corrija o nome da propriedade se necessário.
+
+      async function verificarStatusMes() {
+        try {
+          const usuario = JSON.parse(localStorage.getItem("usuario"));
+          if (!usuario) return;
+
+          const url = `${getApiBaseUrl()}/coordenador/status-mes/${usuario.id}?mes=${encodeURIComponent(mesSelecionado)}`;
+          const resposta = await fetch(url);
+          const dados = await resposta.json();
+
+          // Adicione um log para depuração:
+          console.log("Dados recebidos do status-mes:", dados);
+
+          const notificDiv = document.getElementById("pr");
+          const strong = document.getElementById("pr-strong");
+          const btnLink = notificDiv.querySelector("a");
+          const btnTexto = btnLink?.querySelector("div");
+
+          if (dados.realizado === true) {
+            strong.innerHTML = `
+              <img src="../frontend/assets/check.png" alt="✓" style="width: 58px; height: 58px;" />
+              Lançamento de dados realizado
+            `;
+            notificDiv.style.background =
+              "linear-gradient(to right, #28a745, #218838)";
+
+            if (btnLink) {
+              btnLink.style.display = "inline-block";
+              // btnLink.style.marginTop = "12px";
+            }
+            if (btnTexto) {
+              btnTexto.textContent = "Visualizar dados";
+            }
+          } else {
+            strong.innerHTML = `
+              <img src="../frontend/assets/alert.svg" alt="!" />
+              Lançamento de dados pendente
+            `;
+            notificDiv.style.background =
+              "linear-gradient(to right, #00158c, #0125f2)";
+
+            if (btnLink) {
+              btnLink.style.display = "inline-block";
+              // btnLink.style.marginTop = "12px";
+            }
+            if (btnTexto) {
+              btnTexto.textContent = "Atualizar dados";
+            }
+          }
+        } catch (err) {
+          console.error("Erro ao verificar status do mês:", err);
+        }
+      }
+
+      // ── Eventos de clique nos botões de mês ──
+      function atualizarLinkAtualizarDados() {
+        const link = document.getElementById("btn-atualizar-dados-link");
+        if (!link) return;
+
+        const params = new URLSearchParams();
+        if (mesSelecionado) {
+          params.set("mes", mesSelecionado);
+        }
+
+        const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+        if (usuario?.id) {
+          params.set("coordenadorId", usuario.id);
+        }
+
+        const query = params.toString();
+        link.href = `../frontend/table/table.html${query ? `?${query}` : ""}`;
+      }
+
+      function configurarFiltroMes() {
+        const botoes = document.querySelectorAll("#meses li");
+
+        botoes.forEach((botao) => {
+          botao.addEventListener("click", function () {
+            if (this.classList.contains("bloqueado")) return; // proteção extra, além do CSS
+
+            botoes.forEach((b) => b.removeAttribute("id"));
+            this.id = "this";
+            const sigla = this.textContent.trim().toUpperCase();
+
+            mesSelecionado = mapaMeses[sigla] || sigla;
+            atualizarLinkAtualizarDados();
+            verificarStatusMes();
+            carregarGraficoTime();
+          });
+        });
+      }
+      async function aplicarBloqueioMeses() {
+        try {
+          const usuario = JSON.parse(localStorage.getItem("usuario"));
+          if (!usuario) return;
+
+          const resposta = await fetch(
+            `${getApiBaseUrl()}/coordenador/meses/${usuario.id}`,
+          );
+          const status = await resposta.json();
+          const bloqueados = status.meses_bloqueados || [];
+
+          document.querySelectorAll("#meses li").forEach((li) => {
+            const sigla = li.textContent.trim().toUpperCase();
+            const nomeCompleto = mapaMeses[sigla] || sigla;
+
+            if (bloqueados.includes(nomeCompleto)) {
+              li.classList.add("bloqueado");
+            } else {
+              li.classList.remove("bloqueado");
+            }
+          });
+        } catch (err) {
+          console.error("Erro ao aplicar bloqueio de meses:", err);
+        }
+      }
+      // ── Variável global para armazenar o time selecionado ──
+      let timeSelecionado = "Geral";
+
+      // ── Função 1: Carregar dados do COORDENADOR (Slider Fixo) ──
+      function calcularRankTime(totalMedalhas, numAlunos) {
+        const ranks = [
+          "Bronze",
+          "Prata",
+          "Ouro",
+          "Platina",
+          "Diamante",
+          "Mestre",
+          "Lendário",
+        ];
+        const grupoNormal = 3 * numAlunos;
+        const grupoMestre = 5 * numAlunos;
+        const limiteAteMestre = grupoNormal * 5; // total de medalhas pra alcançar o rank Mestre (índice 5)
+
+        let indice;
+        let medalhasNoRankAtual;
+        let tamanhoRankAtual;
+
+        if (totalMedalhas < limiteAteMestre) {
+          indice = Math.floor(totalMedalhas / grupoNormal);
+          medalhasNoRankAtual = totalMedalhas - indice * grupoNormal;
+          tamanhoRankAtual = grupoNormal;
+        } else {
+          const alemDoMestre = totalMedalhas - limiteAteMestre;
+          if (alemDoMestre >= grupoMestre) {
+            indice = 6; // Lendário
+            medalhasNoRankAtual = grupoMestre;
+          } else {
+            indice = 5; // Mestre
+            medalhasNoRankAtual = alemDoMestre;
+          }
+          tamanhoRankAtual = grupoMestre;
+        }
+
+        if (indice > 6) indice = 6;
+
+        return {
+          rank: ranks[indice],
+          indice,
+          medalhasNoRankAtual,
+          tamanhoRankAtual,
+        };
+      }
+      async function carregarSliderCoordenador() {
+        try {
+          const usuario = JSON.parse(localStorage.getItem("usuario"));
+          if (!usuario) return;
+
+          const resAlunos = await fetch(
+            `https://back-mais-progresso.onrender.com/coordenador/alunos/${usuario.id}`,
+          );
+          const alunos = await resAlunos.json();
+
+          const numAlunos = alunos.length;
+          if (numAlunos === 0) {
+            carregarGraficoTime();
+            return;
+          }
+
+          const totalMedalhasTime = alunos.reduce(
+            (soma, aluno) => soma + Number(aluno.qtd_medalhas || 0),
+            0,
+          );
+
+          const { indice, medalhasNoRankAtual, tamanhoRankAtual } =
+            calcularRankTime(totalMedalhasTime, numAlunos);
+
+          // Move o slider pro rank atual do time
+          currentIndex = indice;
+          updateSlider();
+
+          const rankKeys = [
+            "bronze",
+            "prata",
+            "ouro",
+            "platina",
+            "diamante",
+            "mestre",
+            "lendario",
+          ];
+
+          rankKeys.forEach((rankId, index) => {
+            const card = document.getElementById(rankId);
+            if (!card) return;
+            const barra = card.querySelector(".prc_filled");
+            const contador = card.querySelector(".contagem");
+            if (!barra || !contador) return;
+
+            const tamanhoDesteRank =
+              index === 5 ? 5 * numAlunos : 3 * numAlunos;
+
+            if (index < indice) {
+              barra.style.width = "100%";
+              contador.textContent = `${tamanhoDesteRank}/${tamanhoDesteRank}`;
+            } else if (index === indice) {
+              const porcentagem =
+                (medalhasNoRankAtual / tamanhoRankAtual) * 100;
+              barra.style.width = `${porcentagem < 11 ? 11 : porcentagem}%`;
+              contador.textContent = `${medalhasNoRankAtual}/${tamanhoRankAtual}`;
+            } else {
+              barra.style.width = "11%";
+              contador.textContent = `0/${tamanhoDesteRank}`;
+            }
+          });
+
+          carregarGraficoTime();
+        } catch (err) {
+          console.error("Erro ao carregar slider:", err);
+        }
+      }
+
+      // ── Eventos de clique nos botões de equipe ──
+      function configurarFiltrosTime() {
+        const botoes = document.querySelectorAll("#equipes .equip");
+
+        botoes.forEach((botao) => {
+          botao.addEventListener("click", function () {
+            botoes.forEach((b) => b.classList.remove("selecionado"));
+            this.classList.add("selecionado");
+
+            timeSelecionado = this.textContent.trim();
+            if (timeSelecionado == "In Nat") {
+              timeSelecionado = "In Natura";
+            }
+
+            carregarGraficoTime();
+            carregarRankingAlunos();
+          });
+        });
+      }
+
+      // ── Função para Exportar Dados (Excel Estilizado com Logo) ──
+      async function exportarDados() {
+        try {
+          const usuario = JSON.parse(localStorage.getItem("usuario"));
+          if (!usuario) return;
+
+          // 1. Buscar os alunos com o filtro atual
+          const url = `https://back-mais-progresso.onrender.com/alunos?time=${encodeURIComponent(timeSelecionado)}`;
+          const resposta = await fetch(url);
+          if (!resposta.ok) return;
+
+          const alunos = await resposta.json();
+          if (!Array.isArray(alunos) || alunos.length === 0) {
+            alert("Nenhum dado encontrado para exportar.");
+            return;
+          }
+          const btn = document.getElementById("btn-exportar-dados");
+          if (btn) btn.disabled = true;
+          setTimeout(() => {
+            if (btn) btn.disabled = false;
+          }, 3000);
+          // 2. Calcular as posições (Opção A: 1, 2, 2, 2, 3)
+          let dadosExportacao = [];
+          let posicaoAtual = 1;
+          let medalhasAnterior = null;
+
+          alunos.forEach((aluno, index) => {
+            const medalhas = aluno.qtd_medalhas || 0;
+            const time = aluno.time || "";
+
+            if (medalhasAnterior !== null && medalhas === medalhasAnterior) {
+              // Empate: mantém a posição
+            } else {
+              posicaoAtual = index + 1;
+            }
+            medalhasAnterior = medalhas;
+
+            dadosExportacao.push({
+              Posição: posicaoAtual,
+              Rank: aluno.rank_atual || "Bronze",
+              Nome: aluno.nome || "Sem nome",
+              Time: time,
+              "Quant. Medalhas": medalhas,
+            });
+          });
+
+          // 3. Criar a planilha e adicionar estilo
+          const wb = XLSX.utils.book_new();
+
+          // Cabeçalho com estilo
+          const header = [
+            ["Posição", "Rank", "Nome", "Time", "Quant. Medalhas"],
+          ];
+
+          const ws = XLSX.utils.aoa_to_sheet(header);
+
+          // Adicionar os dados (sem estilo ainda, para não quebrar)
+          XLSX.utils.sheet_add_aoa(
+            ws,
+            dadosExportacao.map((obj) => [
+              obj.Posição,
+              obj.Rank,
+              obj.Nome,
+              obj.Time,
+              obj["Quant. Medalhas"],
+            ]),
+            { origin: "A2" },
+          );
+
+          // 🔽 APLICAR OS ESTILOS (Cores, negrito, bordas)
+          // Estilo do cabeçalho (Azul escuro, texto branco, negrito)
+          const headerStyle = {
+            fill: { fgColor: { rgb: "00158C" } },
+            font: { color: { rgb: "FFFFFF" }, bold: true, sz: 12 },
+            alignment: { horizontal: "center", vertical: "center" },
+            border: {
+              top: { style: "thin", color: { rgb: "FFFFFF" } },
+              bottom: { style: "thin", color: { rgb: "FFFFFF" } },
+              left: { style: "thin", color: { rgb: "FFFFFF" } },
+              right: { style: "thin", color: { rgb: "FFFFFF" } },
+            },
+          };
+
+          // Aplica o estilo nas células do cabeçalho (A1, B1, C1, D1)
+          const range = XLSX.utils.decode_range(ws["!ref"]);
+          for (let col = range.s.c; col <= range.e.c; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+            if (!ws[cellAddress]) continue;
+            ws[cellAddress].s = headerStyle;
+          }
+
+          // Estilo das células de dados (bordas finas, texto alinhado)
+          const cellStyle = {
+            border: {
+              top: { style: "thin", color: { rgb: "000000" } },
+              bottom: { style: "thin", color: { rgb: "000000" } },
+              left: { style: "thin", color: { rgb: "000000" } },
+              right: { style: "thin", color: { rgb: "000000" } },
+            },
+            alignment: { vertical: "center" },
+          };
+
+          // Aplica nas células de dados
+          for (let row = 1; row <= dadosExportacao.length; row++) {
+            for (let col = 0; col <= 4; col++) {
+              const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+              if (!ws[cellAddress]) continue;
+              ws[cellAddress].s = cellStyle;
+
+              // Centraliza a coluna "Posição" (A), "Rank" (B) e "Quant. Medalhas" (E)
+              if (col === 0 || col === 1 || col === 4) {
+                ws[cellAddress].s.alignment = {
+                  horizontal: "center",
+                  vertical: "center",
+                };
+              } else {
+                ws[cellAddress].s.alignment = {
+                  horizontal: "left",
+                  vertical: "center",
+                };
+              }
+            }
+          }
+
+          // Ajustar a largura das colunas
+          ws["!cols"] = [
+            { wch: 12 }, // Posição
+            { wch: 14 }, // Rank
+            { wch: 35 }, // Nome
+            { wch: 15 }, // Time
+            { wch: 22 }, // Quant. Medalhas
+          ];
+
+          // 🔽 INSERIR O LOGO (A imagem do +Progresso)
+          // Para inserir uma imagem, precisamos do caminho absoluto da imagem.
+          // Você pode pré-carregar a imagem ou usar um fetch.
+          try {
+            const logoUrl =
+              window.location.origin + "/frontend/assets/Group 316.png";
+            const response = await fetch(logoUrl);
+            const blob = await response.blob();
+            const reader = new FileReader();
+
+            const imageData = await new Promise((resolve, reject) => {
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+
+            // Inserir a imagem na planilha (na linha 0, coluna 0)
+            ws["!images"] = [
+              {
+                type: "png",
+                data: imageData,
+                // Posição da imagem (linha 0, coluna 0, com um pequeno deslocamento)
+                position: { r: 0, c: 0, h: 1.2, w: 2.5 }, // Ajuste o 'h' e 'w' conforme o tamanho do seu logo
+              },
+            ];
+          } catch (imgErr) {
+            console.warn("Não foi possível inserir o logo:", imgErr);
+          }
+
+          // Adicionar a planilha ao livro e baixar
+          XLSX.utils.book_append_sheet(wb, ws, "Ranking");
+          const nomeArquivo = `Ranking_${timeSelecionado}_${mesSelecionado}.xlsx`;
+          XLSX.writeFile(wb, nomeArquivo);
+        } catch (err) {
+          console.error("Erro ao exportar dados:", err);
+          alert("Ocorreu um erro ao gerar a planilha.");
+        }
+        try {
+          const usuario = JSON.parse(localStorage.getItem("usuario"));
+          if (!usuario) return;
+
+          // 1. Buscar os alunos com o filtro atual (exatamente igual ao gráfico/ranking)
+          const url = `https://back-mais-progresso.onrender.com/alunos?time=${encodeURIComponent(timeSelecionado)}`;
+          const resposta = await fetch(url);
+          if (!resposta.ok) return;
+
+          const alunos = await resposta.json();
+          if (!Array.isArray(alunos) || alunos.length === 0) {
+            alert("Nenhum dado encontrado para exportar.");
+            return;
+          }
+
+          // 2. Calcular as posições (Regra: 1, 2, 2, 2, 3 - Opção A)
+          let dadosExportacao = [];
+          let posicaoAtual = 1;
+          let medalhasAnterior = null;
+
+          // Itera sobre os alunos (que já vêm ordenados por medalhas do Back-end)
+          alunos.forEach((aluno, index) => {
+            const medalhas = aluno.qtd_medalhas || 0;
+            const time = aluno.time || "";
+
+            // Lógica de desempate: Se as medalhas forem iguais à anterior, mantém a posição.
+            // Se for diferente, a posição é o índice + 1 (ex: se tem 2 pessoas na frente, o próximo é o 3º)
+            if (medalhasAnterior !== null && medalhas === medalhasAnterior) {
+              // Empate: mantém a posição
+            } else {
+              // Desempatou: a posição é o índice atual + 1
+              posicaoAtual = index + 1;
+            }
+            medalhasAnterior = medalhas;
+
+            // 3. Monta o objeto com os dados para a planilha
+            dadosExportacao.push({
+              Posição: posicaoAtual,
+              Nome: aluno.nome || "Sem nome",
+              Time: time,
+              "Quant. Medalhas": medalhas,
+            });
+          });
+
+          // 4. Gerar a planilha usando a biblioteca SheetJS
+          const wb = XLSX.utils.book_new();
+          const ws = XLSX.utils.json_to_sheet(dadosExportacao);
+
+          // Ajusta a largura das colunas para ficar bonito no Excel
+          ws["!cols"] = [
+            { wch: 10 }, // Posição
+            { wch: 35 }, // Nome
+            { wch: 15 }, // Time
+            { wch: 20 }, // Quant. Medalhas
+          ];
+
+          XLSX.utils.book_append_sheet(wb, ws, "Ranking");
+
+          // 5. Baixar o arquivo
+          const nomeArquivo = `Ranking_${timeSelecionado}_${mesSelecionado}.xlsx`;
+          // XLSX.writeFile(wb, nomeArquivo);
+        } catch (err) {
+          console.error("Erro ao exportar dados:", err);
+          alert("Ocorreu um erro ao gerar a planilha.");
+        }
+      }
+
+      // ── Função 3: Carregar e renderizar o Ranking (COM FILTRO DE TIME) ──
+      async function carregarGraficoTime() {
+        try {
+          try {
+            const usuario = JSON.parse(localStorage.getItem("usuario"));
+            if (!usuario) return;
+
+            // 🔽 CRIAMOS O OBJETO DE RANKS ANTES DE TUDO. ELE SEMPRE EXISTIRÁ.
+            let ranksExatos = {
+              Bronze: 0,
+              Prata: 0,
+              Ouro: 0,
+              Platina: 0,
+              Diamante: 0,
+              Mestre: 0,
+              Lendário: 0,
+            };
+
+            const url = `https://back-mais-progresso.onrender.com/alunos?time=${encodeURIComponent(timeSelecionado)}&mes=${encodeURIComponent(mesSelecionado)}`;
+            const resposta = await fetch(url);
+
+            if (!resposta.ok) {
+              console.warn(
+                "Erro no servidor ao buscar gráfico. Status:",
+                resposta.status,
+              );
+              return;
+            }
+
+            const alunos = await resposta.json();
+
+            if (!Array.isArray(alunos)) {
+              console.warn(
+                "Dados recebidos não são uma lista de alunos:",
+                alunos,
+              );
+              return;
+            }
+
+            alunos.forEach((aluno) => {
+              const rank = aluno.rank_atual || "Bronze";
+              if (ranksExatos.hasOwnProperty(rank)) ranksExatos[rank]++;
+            });
+
+            const ids = [
+              "bar1",
+              "bar2",
+              "bar3",
+              "bar4",
+              "bar5",
+              "bar6",
+              "bar7",
+            ];
+            const chaves = [
+              "Bronze",
+              "Prata",
+              "Ouro",
+              "Platina",
+              "Diamante",
+              "Mestre",
+              "Lendário",
+            ];
+
+            let maxAlunos = 1;
+            chaves.forEach((chave) => {
+              if (ranksExatos[chave] > maxAlunos)
+                maxAlunos = ranksExatos[chave];
+            });
+
+            const alturaMaxima = 272;
+            const idsValor = [
+              "valor1",
+              "valor2",
+              "valor3",
+              "valor4",
+              "valor5",
+              "valor6",
+              "valor7",
+            ];
+
+            ids.forEach((id, index) => {
+              const barra = document.getElementById(id);
+              if (!barra) return;
+              const qtdAlunos = ranksExatos[chaves[index]] || 0;
+              const alturaCalculada = (qtdAlunos / maxAlunos) * alturaMaxima;
+              const altura = Math.max(alturaCalculada, 11);
+              barra.style.height = `${altura}px`;
+
+              const valorSpan = document.getElementById(idsValor[index]);
+              if (valorSpan)
+                valorSpan.textContent = qtdAlunos > 0 ? qtdAlunos : "";
+            });
+          } catch (err) {
+            console.error("Erro ao carregar gráfico:", err);
+          }
+        } catch (err) {
+          console.error("Erro ao carregar gráfico:", err);
+        }
+        try {
+          const usuario = JSON.parse(localStorage.getItem("usuario"));
+          if (!usuario) return;
+
+          // CORREÇÃO: Rota que aceita o filtro de time, sem ID do coordenador
+          const url = `https://back-mais-progresso.onrender.com/alunos?time=${encodeURIComponent(timeSelecionado)}&mes=${encodeURIComponent(mesSelecionado)}`;
+          const resposta = await fetch(url);
+          const alunos = await resposta.json();
+
+          const iconesRank = {
+            Bronze: "bronzee.png",
+            Prata: "prataa.png",
+            Ouro: "ouroo.png",
+            Platina: "platinaaa.png",
+            Diamante: "diamantee2.png",
+            Mestre: "mestree.png",
+            Lendário: "lendarioo.png",
+          };
+
+          const container = document.querySelector("#top-ranking");
+          container.innerHTML = "";
+
+          alunos.forEach((aluno, index) => {
+            const posicao = index + 1;
+            const rankNome = aluno.rank_atual || "Bronze";
+            const icone = iconesRank[rankNome] || "bronzee.png";
+            const timeAluno = aluno.time || "";
+            const nomeAluno = aluno.nome || "Aluno sem nome";
+            const medalhas = aluno.qtd_medalhas || 0;
+
+            const div = document.createElement("div");
+            const saldoExtra = aluno.saldo_medalha_extra || 0;
+            div.className = "top";
+            div.innerHTML = `
+              <div class="posicao-numero">${posicao}</div>
+              <div class="infos">
+                <div class="info1">
+                  <img src="../frontend/assets/${icone}" alt="${rankNome}" />
+                  <div class="div">
+                    <span>${timeAluno}</span>
+                    <strong>${nomeAluno}</strong>
+                  </div>
+                </div>
+                <div class="info2">
+                  ${
+                    saldoExtra > 0
+                      ? `<div class="numero numero-extra">${saldoExtra}</div>
+                        <img class="icon-laranja" src="../frontend/assets/icon-amarelo.png" />`
+                      : ""
+                  }
+                  <div class="numero">${medalhas}</div>
+                  <img src="../frontend/assets/icon-zul.png" />
+                </div>
+              </div>
+            `;
+            container.appendChild(div);
+          });
+        } catch (err) {
+          console.error("Erro ao carregar ranking dos alunos:", err);
+        }
+      }
+
+      // ── Inicialização ──
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const mesNaUrl = urlParams.get("mes");
+
+        if (mesNaUrl) {
+          mesSelecionado = mesNaUrl;
+          const botoes = document.querySelectorAll("#meses li");
+          botoes.forEach((b) => {
+            b.removeAttribute("id");
+            const sigla = b.textContent.trim().toUpperCase();
+            const nomeCompleto = mapaMeses[sigla] || sigla;
+            if (nomeCompleto === mesSelecionado) {
+              b.id = "this";
+            }
+          });
+        }
+
+        document.getElementById("geral")?.classList.add("selecionado");
+        atualizarLinkAtualizarDados();
+        configurarFiltroMes();
+        configurarFiltrosTime();
+        carregarSliderCoordenador();
+        verificarStatusMes();
+        aplicarBloqueioMeses();
+      });
+
+      function preencherNomeUsuario() {
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
+        if (usuario && usuario.nome) {
+          document.querySelector("#titulo h1 strong").textContent =
+            usuario.nome;
+        }
+
+        // ── Evento de Clique do Botão Exportar ──
+        document.addEventListener("DOMContentLoaded", function () {
+          const btnExportar = document.getElementById("btn-exportar-dados");
+          if (btnExportar) {
+            btnExportar.addEventListener("click", exportarDados);
+          }
+        });
+      }
+
+      preencherNomeUsuario();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+  </body>
+</html>

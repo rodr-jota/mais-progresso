@@ -1,0 +1,406 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Inter";
+}
+body {
+  padding: 20px 24px;
+  padding-bottom: 200px;
+  position: relative;
+}
+h1 {
+  font-size: 32px;
+  font-weight: 400;
+  color: black;
+  margin-bottom: 40px;
+}
+h1 strong {
+  font-size: 48px;
+  font-weight: 600;
+  color: #00158c;
+}
+#slider {
+  display: flex;
+  scroll-snap-type: mandatory;
+  gap: 150px;
+}
+.card {
+  width: 100%;
+  position: relative;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url(../frontend/assets/texture.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 38px;
+  margin-bottom: 50px;
+}
+.card .container {
+  display: flex;
+  align-items: center;
+  gap: 72px;
+}
+.card .container > img {
+  width: 24%;
+}
+.card .container #content > span {
+  font-size: 28px;
+  color: #5b381c;
+  display: block;
+}
+span#progress {
+  margin-bottom: 20px;
+}
+.card .container #content > strong {
+  display: block;
+  font-size: 62px;
+  font-weight: 600;
+  color: #5b381c;
+  margin-bottom: 28px;
+}
+.card .container #content .grafic {
+  width: 500px;
+  height: 40px;
+  border-radius: 26px;
+  background-color: #d5d5d5;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.card .container #content .grafic #prc_filled {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  font-size: 24px;
+  position: absolute;
+  border-radius: 26px;
+  width: 66%;
+  height: 100%;
+  background-color: #5b381c;
+  font-weight: 300;
+  color: white;
+}
+.btn-next {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #d5d5d5;
+  cursor: pointer;
+}
+
+#meses {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  position: relative;
+  margin-bottom: 90px;
+}
+#meses li {
+  width: 160px;
+  height: 50px;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  font-weight: 300;
+  text-transform: uppercase;
+  color: black;
+  background-color: #e5e7f3;
+  border-radius: 50px;
+}
+#meses li#this {
+  background-image: linear-gradient(to right, #00158c, #0125f2);
+  color: white;
+}
+#meses::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: black;
+  bottom: -40px;
+}
+
+#toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+#toggles .resul {
+  width: 100%;
+  position: relative;
+  background-image: linear-gradient(to right, #00158c, #0125f2);
+  color: white;
+  font-size: 48px;
+  font-weight: 500;
+  padding: 30px 22px;
+  padding-left: 130px;
+  border-radius: 16px;
+}
+#toggles .resul::before {
+  content: url(../frontend/assets/Vector\ 147.png);
+  display: block;
+  position: absolute;
+  top: 30px;
+  left: 50px;
+}
+#toggles .resul#extra {
+  background-image: linear-gradient(to right, #fda827, #fe9400);
+}
+
+footer {
+  width: 100%;
+  position: absolute;
+  background-color: #00158c;
+  display: flex;
+  align-items: center;
+  padding: 8px 24px;
+  bottom: 0;
+  left: 0;
+}
+
+:root {
+  --blue1: #071c98;
+  --blue2: #0e31ff;
+  --card: #e9ebf9;
+  --bar-bg: #c2c8ef;
+  --text: #0b0b0b;
+  --white: #fff;
+  --gold: #ffb321;
+}
+
+.resul {
+  width: calc(100% - 72px);
+  margin: 40px auto 24px;
+  padding: 28px 34px;
+  border-radius: 18px;
+  color: #fff;
+  font-size: 64px;
+  font-weight: 400;
+  background: linear-gradient(90deg, var(--blue1), var(--blue2));
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform 0.35s ease,
+    filter 0.35s ease;
+}
+
+.resul:active {
+  transform: scale(0.99);
+}
+
+.mission-card {
+  width: calc(100% - 72px);
+  margin: 0 auto;
+  padding: 28px 24px;
+  border-radius: 42px;
+  background: var(--card);
+  display: grid;
+  grid-template-columns: 260px 1px 1fr;
+  gap: 0;
+  align-items: stretch;
+
+  opacity: 0;
+  transform: translateY(-10px) scale(0.985);
+  pointer-events: none;
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.mission-card.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.mission-divider {
+  width: 1px;
+  background: #2f2f2f;
+  opacity: 0.85;
+  margin: 6px 0;
+}
+
+.mission-left {
+  position: relative;
+  padding: 8px 20px 8px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 22px;
+}
+
+.mission-left .arrow {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  font-size: 92px;
+  line-height: 0.8;
+  color: #fff;
+  opacity: 0.98;
+  transform: translateX(-8px);
+}
+
+.mission-left h2 {
+  margin: 46px 0 0 24px;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.medal-area {
+  position: relative;
+  height: 260px;
+  margin-top: -20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.medal-ribbon {
+  position: absolute;
+  top: 24px;
+  left: 18px;
+  width: 170px;
+  height: 120px;
+  opacity: 0;
+  transform: translateY(-14px) scale(0.9);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+.medal-area img {
+  width: 113px;
+
+  filter: brightness(0) saturate(100%) invert(84%) sepia(12%) saturate(511%)
+    hue-rotate(192deg) brightness(95%) contrast(92%);
+
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease,
+    filter 0.8s ease;
+}
+
+/* quando abrir */
+.mission-card.show .medal-area img {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+
+  /* #00158C */
+  filter: brightness(0) saturate(100%) invert(11%) sepia(96%) saturate(5070%)
+    hue-rotate(232deg) brightness(79%) contrast(120%);
+}
+
+.medal-circle {
+  position: absolute;
+  left: 44px;
+  top: 88px;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: #b7bfe8;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 68px;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.9);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.mission-card.show .medal-ribbon,
+.mission-card.show .medal-circle {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.mission-right {
+  padding: 22px 34px 348px 34px;
+}
+
+.metric + .metric {
+  margin-top: 34px;
+}
+
+.metric-title {
+  font-size: 54px;
+  line-height: 1.05;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.bar {
+  width: 100%;
+  height: 39px;
+  border-radius: 999px;
+  background: var(--bar-bg);
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #07209f, #051a8d);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px 0 28px;
+  color: #fff;
+  position: relative;
+  transition: width 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: 0.55s; /* começa depois que o card aparece */
+}
+
+.mission-card.show .bar-fill {
+  width: var(--target);
+}
+
+.bar-value {
+  font-size: 24px;
+  font-weight: 400;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:
+    opacity 0.25s ease 0.75s,
+    transform 0.25s ease 0.75s;
+}
+
+.bar-star {
+  font-size: 35px;
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.mission-card.show .bar-value {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+}
+
+.bar-star.revelada {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+}
