@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Aluno</title>
+    <link rel="stylesheet" href="carrousel.css">
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: "Inter";
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        padding: 20px 24px;
+        padding-bottom: 200px;
+        position: relative;
+        scroll-behavior: smooth;
+      }
+      #titulo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #00158c;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding-left: 38px;
+        padding-right: 44px;
+        padding-top: 23px;
+        padding-bottom: 32px;
+        border-bottom-right-radius: 65px;
+      }
+      h1 {
+        font-size: 32px;
+        font-weight: 400;
+        color: black;
+        /* margin-bottom: 40px; */
+        color: white;
+      }
+      h1 strong {
+        font-size: 48px;
+        font-weight: 600;
+        color: white;
+      }
+
+
+      #clain {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        position: relative;
+        margin-bottom: 90px;
+      }
+      #clain #left {
+        background: linear-gradient(to right, #FDA827, #FE9807, #FE9400);
+        width: 82%;
+        border-radius: 144px;
+        padding-left: 77px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        display: flex;
+        gap: 40px;
+        align-items: center;
+      }
+      #clain #left #text {
+        display: flex;
+        flex-direction: column;
+      }
+      #clain #left #text p {
+        font-size: 28px;
+        color: white;
+      }
+      #clain #left #text strong {
+        font-size: 50px;
+        font-weight: 600;
+        color: white;
+      }
+      #clain #right {
+        width: 420px;
+        border: 2px solid #fda72700;
+        background-color: #F3EFE5;
+        z-index: 1;
+        height: 100%;
+        padding-top: 32px;
+        padding-bottom: 32px;
+        position: absolute;
+        right: 0;
+        border-radius: 144px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: 400ms ease;
+        cursor: pointer;
+      }
+      #clain #right:hover {
+        background-color: #ffffff;
+        border-color: #FDA827;
+      }
+      #clain #right p {
+        font-size: 25px;
+        font-weight: 600;
+        color: #FDA827;
+      }
+
+      #pop-up-background {
+        background-color: rgba(0, 0, 0, 0.5);
+        width: 100%;
+        height: 100em;
+        position: absolute;
+        z-index: 3;
+        left: 0;
+        top: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        display: none;
+      }
+      #pop-up {
+            width: 800px;
+    height: 420px;
+    border: 3.52px solid #FDA827;
+    border-radius: 54px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    padding-top: 208px;
+    padding-left: 50px;
+    padding-right: 50px;
+    position: absolute;
+    z-index: 4;
+    margin: 0 auto;
+      }
+      #pop-up #retangle {
+            background-color: #FDA827;
+    width: 100%;
+    height: 190px;
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 45px;
+      }
+      #pop-up strong {
+        display: block;
+        color: #FDA827;
+        font-weight: 600;
+        font-size: 33px;
+        margin-bottom: 40px;
+      }
+      #pop-up #botoes {
+        display: flex;
+        gap: 42px;
+      }
+      #pop-up #botoes .botao {
+        width: 328px;
+        height: 86px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 33px;
+        font-weight: 600;
+        border-radius: 81px;
+      }
+      .botao#sim {
+        background-color: #FDA827;
+        color: white;
+        cursor: pointer;
+      }
+      .botao#nao {
+        background-color: #E6D1BE;
+        color: #D29D35;
+        cursor: pointer;
+      }
+      
+
+      #meses {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        position: relative;
+        margin-bottom: 90px;
+      }
+      #meses li {
+        width: 160px;
+        height: 50px;
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 26px;
+        font-weight: 300;
+        text-transform: uppercase;
+        color: black;
+        background-color: #e5e7f3;
+        border-radius: 50px;
+      }
+      #meses li#this {
+        background-color: #00158C;
+        color: white;
+      }
+      #meses::after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background-color: black;
+        bottom: -40px;
+      }
+
+      #toggles {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+      #toggles .resul {
+        width: 100%;
+        position: relative;
+        background-image: linear-gradient(to right, #00158c, #0125f2);
+        color: white;
+        font-size: 43px;
+        font-weight: 600;
+        padding: 18px 22px;
+        padding-left: 130px;
+        border-radius: 16px;
+        cursor: pointer;
+        user-select: none;
+      }
+      #toggles .resul::before {
+        content: "›";
+        display: block;
+        position: absolute;
+        top: 46%;
+        left: 50px;
+        transform: translateY(-50%);
+        font-size: 64px;
+        line-height: 1;
+        color: white;
+        transition: transform 0.35s ease;
+      }
+      #toggles .resul.open::before {
+        transform: translateY(-50%) rotate(90deg);
+      }
+      #toggles .resul#extra {
+        background-image: linear-gradient(to right, #fda827, #fe9400);
+      }
+
+      /* #saldo {
+        margin-top: 57px;
+        width: 100%;
+        height: 140px;
+
+        display: flex;
+      }
+      #saldo #left{
+        background-color: #FDA827;
+        width: 67%;
+        border-radius: 57px;
+        border-top-right-radius: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #saldo #left strong {
+        font-size: 64px;
+        font-weight: 500;
+        color: white;
+      }
+      #saldo #right {
+        z-index: -1;
+        position: relative;
+        left: -50px;
+        width: calc(33% + 50px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #E5E7F3;
+        border-bottom-right-radius: 57px;
+      }
+      #saldo #right strong {
+        font-size: 57px;
+        font-weight: 500;
+      } */
+
+      footer {
+        width: 100%;
+        position: absolute;
+        background-color: #00158c;
+        display: flex;
+        align-items: center;
+        padding: 8px 24px;
+        bottom: 0;
+        left: 0;
+      }
+
+      :root {
+        --blue1: #071c98;
+        --blue2: #0e31ff;
+        --card: #e9ebf9;
+        --bar-bg: #c2c8ef;
+        --text: #0b0b0b;
+        --white: #fff;
+        --gold: #ffb321;
+      }
+
+      /* ── mission-card: colapsa por padrão ── */
+      .mission-card {
+        width: 100%;
+        margin: 0 auto;
+        border-radius: 42px;
+        background: var(--card);
+        display: grid;
+        grid-template-columns: 260px 1px 1fr;
+        gap: 0;
+        align-items: stretch;
+
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+          opacity 0.4s ease, 
+          margin 0.4s ease;
+        margin: 0;
+        margin-top: -28px;
+        pointer-events: none;
+      }
+
+      .mission-card.show {
+        max-height: 243px; /* valor maior que a altura real do card */
+        opacity: 1;
+        pointer-events: auto;
+        margin-top: 0; /* restaura o gap normal */
+      }
+
+      .mission-divider {
+        width: 1px;
+        background: #2f2f2f;
+        opacity: 0.85;
+        margin: 6px 0;
+      }
+
+      .mission-left {
+        position: relative;
+        padding: 8px 20px 8px 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 10px;
+      }
+
+      .mission-left h2 {
+        margin: 46px 0 0 66px;
+        font-size: 24px;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      /* ── área da medalha: crossfade entre as duas imagens ── */
+      .medal-area {
+  position: relative;
+  height: 260px;
+  margin-top: -20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+      .medal-area img {
+        position: absolute;
+        width: 113px;
+        transition: opacity 0.6s ease 0.4s;
+      }
+
+      .medal-area .medal-grey {
+        opacity: 1;
+        top: 30px;
+      }
+
+      .medal-area .medal-blue {
+        opacity: 0;
+        top: 30px;
+      }
+
+      /* quando o card abre, faz o crossfade */
+      /* .mission-card.show .medal-area .medal-grey {
+        opacity: 0;
+        top: 30px;
+      }
+
+      .mission-card.show .medal-area .medal-blue {
+        opacity: 1;
+      } */
+
+      .mission-right {
+        padding: 22px 34px 348px 34px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .metric + .metric {
+        margin-top: 34px;
+      }
+
+      .metric-title {
+        font-size: 24px;
+        font-weight: 300;
+        line-height: 1.05;
+        color: var(--text);
+        margin-bottom: 20px;
+      }
+
+      .bar {
+        width: 100%;
+        height: 39px;
+        border-radius: 999px;
+        background: var(--bar-bg);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .bar-fill {
+        width: 11%;
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #07209f, #051a8d);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px 0 28px;
+        color: #fff;
+        position: relative;
+        transition: width 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transition-delay: 0.55s;
+      }
+
+      .mission-card.show .bar-fill {
+        width: var(--target);
+      }
+
+      .bar-value {
+        font-size: 24px;
+        font-weight: 300;
+        opacity: 0;
+        transform: translateX(-10px);
+        transition:
+          opacity 0.25s ease 0.75s,
+          transform 0.25s ease 0.75s;
+      }
+
+      .bar-star {
+  font-size: 35px;
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.mission-card.show .bar-value {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+}
+
+.bar-star.revelada {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+  /* display: block; */
+}
+
+      #meses li {
+        background-color: #e5e7f3;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  color: black;
+  cursor: pointer;
+  transition: 200ms ease;
+      }
+      #meses li:hover:not(.bloqueado) {
+        background-color: #1e39d3;
+        cursor: pointer;
+        border: 1.5px solid white;
+        color: white;
+      }
+
+      #meses li.bloqueado {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+    </style>
+  </head>
+  <body>
+    <div id="titulo">
+      <h1>Bem-vindo(a) <br /><strong>Maria</strong></h1>
+      <img src="../frontend/assets/titulo-logo.png" />
+    </div>
+    <div class="slider-wrapper">
+      <div class="slider-track">
+
+        <div class="card" id="bronze">
+          <div class="container">
+            <div class="btn-prev" style="opacity: 0;">
+              <img src="../frontend/assets/arrow.svg" alt=">" style="rotate: 180deg;"/>
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/broze1.png"
+              alt="Medalha de Bronze"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Bronze</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">1/3</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="prata">
+          <div class="container">
+            <div class="btn-prev">
+              <img src="../frontend/assets/arrow.svg" alt=">" style="rotate: 180deg;"/>
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/prata.png"
+              alt="Medalha de Prata"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Prata</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled"><span class="contagem">0/3</span></div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="ouro">
+          <div class="container">
+            <div class="btn-prev">
+              <img src="../frontend/assets/arrow.svg" alt=">" style="rotate: 180deg;"/>
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/ouro.png"
+              alt="Medalha de Ouro"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Ouro</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled"><span class="contagem">0/3</span></div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="platina">
+          <div class="container">
+            <div class="btn-prev">
+              <img src="../frontend/assets/arrow.svg" alt=">" style="rotate: 180deg;"/>
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/platina.png"
+              alt="Medalha de Platina"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Platina</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">0/3</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+        
+        <div class="card" id="diamante">
+          <div class="container">
+            <div class="btn-prev">
+              <img src="../frontend/assets/arrow.svg" alt=">" style="rotate: 180deg;"/>
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/diamante.png"
+              alt="Medalha de diamante"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Diamante</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">0/3</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="mestre">
+          <div class="container">
+            <div class="btn-prev">
+              <img src="../frontend/assets/arrow.svg" alt=">" style="rotate: 180deg;"/>
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/mestre.png"
+              alt="Medalha de mestre"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Mestre</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">0/5</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="lendario">
+          <div class="container">
+            <div class="btn-prev">
+              <img src="../frontend/assets/arrow.svg" alt=">" style="rotate: 180deg;"/>
+            </div>
+            <img
+              class="medalha"
+              src="../frontend/assets/cards2/lendario.png"
+              alt="Medalha de lenda"
+            />
+            <div class="content">
+              <span>Rank atual</span>
+              <strong>Lendário</strong>
+              <span class="progress">Progresso para o próximo nível</span>
+              <div class="grafic">
+                <div class="prc_filled">
+                  <span class="contagem">Você chegou ao rank máximo!</span>
+                </div>
+              </div>
+            </div>
+            <div class="btn-next" style="opacity: 0;">
+              <img src="../frontend/assets/arrow.svg" alt=">" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="clain">
+      <div id="left">
+        <img src="../frontend/assets/distintivo.png" style="height: 120px;" />
+        <div id="text">
+          <p>Você possui...</p>
+          <strong>1 medalha extra</strong>
+        </div>
+      </div>
+      <div id="right">
+        <img src="../frontend/assets/clain-icon.svg" />
+        <p>Resgatar agora!</p>
+      </div>
+
+    </div>
+    <div id="pop-up-background">
+      <div id="pop-up">
+        <div id="retangle">
+          <img src="../frontend/assets/extra-icon.svg" alt="">
+        </div>
+      <strong>Você gostaria de usar uma medalha extra?</strong>
+      <div id="botoes">
+        <div class="botao" id="sim">SIM</div>
+        <div class="botao" id="nao">NÃO</div>
+      </div>
+    </div>
+  </div>
+    
+
+    <ul id="meses">
+      <li id="this">Abr</li>
+      <li>Mai</li>
+      <li>Jun</li>
+      <li>Ago</li>
+      <li>Set</li>
+      <li>Out</li>
+      <li>Nov</li>
+    </ul>
+
+    <div id="toggles">
+      <div class="resul" id="toggleLideranca">Liderança</div>
+
+      <div class="mission-card" id="missionCard">
+        <div class="mission-left" style="margin-top: -23px">
+          <h2>Missão 1</h2>
+
+          <div class="medal-area">
+            <!-- cinza: estado inicial -->
+            <img
+              class="medal-grey"
+              src="../frontend/assets/medal1.svg"
+              alt="Medalha cinza"
+              style="width: 113px"
+            />
+            <!-- azul: estado final -->
+            <img
+              class="medal-blue"
+              src="../frontend/assets/medal2.svg"
+              alt="Medalha azul"
+              style="width: 113px"
+            />
+          </div>
+        </div>
+
+        <div class="mission-divider"></div>
+
+        <div class="mission-right">
+          <div class="metric">
+            <div class="metric-title">Porcentagem de check-ins</div>
+            <div class="bar">
+              <div class="bar-fill" id="fill-checkin" style="--target: 0%">
+                <span class="bar-value" id="bar-checkin"></span>
+                <span class="bar-star" id="star-check-in">★</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="metric">
+            <div class="metric-title">Tempo médio de atendimento</div>
+            <div class="bar">
+              <div class="bar-fill" id="fill-tma" style="--target: 0%">
+                <span class="bar-value" id="bar-tma"></span>
+                <span class="bar-star" id="star-tma">★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mission-card" id="missionCard2">
+        <div class="mission-left" style="margin-top: -23px">
+          <h2>Missão 2</h2>
+
+          <div class="medal-area">
+            <img
+              class="medal-grey"
+              src="../frontend/assets/medal1.svg"
+              alt="Medalha cinza"
+              style="width: 113px"
+            />
+            <img
+              class="medal-blue"
+              src="../frontend/assets/medal2.svg"
+              alt="Medalha azul"
+              style="width: 113px"
+            />
+          </div>
+        </div>
+
+        <div class="mission-divider"></div>
+
+        <div class="mission-right">
+          <div class="metric">
+            <div class="metric-title">Participação em matinal</div>
+            <div class="bar">
+              <div class="bar-fill" id="fill-matinal" style="--target: 0%">
+                <span class="bar-value" id="bar-matinal"></span>
+                <span class="bar-star" id="star-matinal">★</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="metric">
+            <div class="metric-title">Check-in às 8:00</div>
+            <div class="bar">
+              <div class="bar-fill" id="fill-checkin_8" style="--target: 0%">
+                <span class="bar-value" id="valor-checkin8"></span>
+                <span class="bar-star" id="star-checkin_8">★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resul" id="toggleTino">Tino Comercial</div>
+
+      <div class="mission-card" id="missionCard_2">
+        <div class="mission-left" style="margin-top: -23px">
+          <h2>Missão 1</h2>
+
+          <div class="medal-area">
+            <!-- cinza: estado inicial -->
+            <img
+              class="medal-grey"
+              src="../frontend/assets/medal1.svg"
+              alt="Medalha cinza"
+              style="width: 113px"
+            />
+            <!-- azul: estado final -->
+            <img
+              class="medal-blue"
+              src="../frontend/assets/medal2.svg"
+              alt="Medalha azul"
+              style="width: 113px"
+            />
+          </div>
+        </div>
+
+        <div class="mission-divider"></div>
+
+        <div class="mission-right">
+          <div class="metric">
+            <div class="metric-title">Análise de dados</div>
+            <div class="bar">
+              <div class="bar-fill" id="preench-de-dados1" style="--target: 0%">
+                <span class="bar-value" id="bar-analise"></span>
+                <span class="bar-star" id="star-analise">★</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-title"></div>
+            <div class="bar">
+              <div class="bar-fill" style="--target: 100%">
+                <span class="bar-value" style="display: flex; align-items: center; gap: 16px;"> <img src="../frontend/assets/Group 343.svg" width="31px" style="margin-left: -24px;" alt=""> Foque em quantificar os potenciais dos clientes.</span>
+                <!-- <span class="bar-star">★</span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mission-card" id="missionCard2_2">
+        <div class="mission-left" style="margin-top: -23px">
+          <h2>Missão 2</h2>
+
+          <div class="medal-area">
+            <img
+              class="medal-grey"
+              src="../frontend/assets/medal1.svg"
+              alt="Medalha cinza"
+              style="width: 113px"
+            />
+            <img
+              class="medal-blue"
+              src="../frontend/assets/medal2.svg"
+              alt="Medalha azul"
+              style="width: 113px"
+            />
+          </div>
+        </div>
+
+        <div class="mission-divider"></div>
+
+        <div class="mission-right">
+          <div class="metric">
+            <div class="metric-title">Fazer análise da carteira</div>
+            <div class="bar">
+              <div class="bar-fill" id="preench-da-carteira" style="--target: 0%">
+                <span class="bar-value" id="bar-olhar"></span>
+                <span class="bar-star" id="star-olhar">★</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-title"></div>
+            <div class="bar">
+              <div class="bar-fill" style="--target: 100%">
+                <span class="bar-value" style="display: flex; align-items: center; gap: 16px;"> <img src="../frontend/assets/Group 343.svg" width="31px" style="margin-left: -24px;" alt=""> Ao executar, lembre-se de quantificar os resultados.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="resul" id="toggleExtra" style="background: linear-gradient(to right, #FDA827, #FE9400);">Medalha Extra</div>
+  
+      <div class="mission-card" id="missionCard_3">
+        <div class="mission-left" style="margin-top: -23px">
+          <h2>Missão 1</h2>
+  
+          <div class="medal-area">
+            <!-- cinza: estado inicial -->
+            <img
+              class="medal-grey"
+              src="../frontend/assets/medal1.svg"
+              alt="Medalha cinza"
+              style="width: 113px"
+            />
+            <!-- amarelo: estado final -->
+            <img
+              class="medal-blue"
+              src="../frontend/assets/medal3.svg"
+              alt="Medalha azul"
+              style="width: 113px"
+            />
+          </div>
+        </div>
+  
+        <div class="mission-divider"></div>
+  
+        <div class="mission-right">
+          <div class="metric">
+            <div class="metric-title">Fazer análise da carteira</div>
+            <div class="bar">
+              <div class="bar-fill" id="preench-extra" style="--target: 11%; background: #FDA827;">
+                <span class="bar-value" id="value-extra">0/1</span>
+              </div>
+            </div>
+          </div>
+  
+          <div class="metric">
+            <div class="metric-title"></div>
+            <div class="bar">
+              <div class="bar-fill" style="--target: 100%; background: #FDA827;">
+                <span class="bar-value" style="display: flex; align-items: center; gap: 16px;"> <img src="../frontend/assets/Group 342.svg" width="31px" style="margin-left: -24px;" alt="">Foque em quantificar os potenciais dos clientes.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+<!-- 
+    <div id="saldo">
+      <div id="left">
+        <strong>Saldo de medalhas extras</strong>
+      </div>
+      <div id="right">
+        <strong>0 medalhas</strong>
+      </div>
+    </div> -->
+    
+
+    <footer>
+      <a href="#"
+        ><img src="../frontend/assets/image 10.png" alt="Institito J&F"
+      /></a>
+    </footer>
+
+    <script src="dash_aluno.js"></script>
+  </body>
+</html>

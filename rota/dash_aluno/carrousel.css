@@ -1,0 +1,159 @@
+.slider-wrapper {
+  width: 1303px;
+  overflow: hidden;
+  border-radius: 38px;
+  margin-bottom: 80px;
+  margin-top: 210px;
+}
+
+.slider-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.4s ease-in-out;
+}
+
+.card {
+  width: 100%;
+  flex-shrink: 0;
+  position: relative;
+  height: 340px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url(../frontend/assets/texture.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 38px;
+}
+.card .container .content .prc_filled .contagem {
+  color: white;
+}
+
+.card#prata {
+  background: url(../frontend/assets/cards2/back-prata.png);
+  
+}
+.card#prata .content > span, .card#prata strong {
+  color: #646365;
+}
+.card#prata .prc_filled {
+  background-color: #646365;
+}
+
+.card#ouro {
+  background: url(../frontend/assets/cards2/back-ouro.png);
+  
+}
+.card#ouro .content > span, .card#ouro strong {
+  color: #D29D35;
+}
+.card#ouro .prc_filled {
+  background-color: #D29D35;
+}
+
+.card#platina {
+  background: url(../frontend/assets/cards2/back-platina.png);
+}
+.card#platina .content > span, .card#platina strong {
+  color: #57DBDB;
+}
+.card#platina .prc_filled {
+  background-color: #57DBDB;
+}
+
+.card#diamante {
+  background: url(../frontend/assets/cards2/back-diamante.png);
+}
+.card#diamante .content > span, .card#diamante strong {
+  color: #073792;
+}
+.card#diamante .prc_filled {
+  background-color: #073792;
+}
+
+.card#mestre {
+  background: url(../frontend/assets/cards2/back-mestre.png);
+  
+}
+.card#mestre .content > span, .card#mestre strong {
+  color: #372A9B;
+}
+.card#mestre .prc_filled {
+  background-color: #372A9B;
+}
+
+.card#lendario {
+  background: url(../frontend/assets/cards2/back-legend.png);
+  
+}
+.card#lendario .content > span, .card#lendario strong {
+  color: #BE3209;
+}
+.card#lendario .prc_filled {
+  background-color: #BE3209;
+}
+
+.card .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+.card .container > img {
+  width: 18%;
+}
+.card .container .content > span {
+  font-size: 26px;
+  color: #5b381c;
+  display: block;
+}
+.content .progress {
+  margin-bottom: 20px;
+}
+.card .container .content > strong {
+  display: block;
+  font-size: 62px;
+  font-weight: 600;
+  color: #5b381c;
+  margin-bottom: 19px;
+}
+.card .container .content .grafic {
+  width: 766px;
+  height: 40px;
+  border-radius: 26px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.card .container .content .grafic .prc_filled {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  font-size: 24px;
+  position: absolute;
+  border-radius: 26px;
+  width: 11%;
+  height: 100%;
+  background-color: #5b381c;
+  font-weight: 300;
+  color: white;
+}
+
+hr {
+  margin-bottom: 50px;
+}
+
+.btn-next, .btn-prev {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #fff;
+  cursor: pointer;
+}
+.btn-prev > img {
+  margin-left: -7px;
+}
