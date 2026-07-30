@@ -110,7 +110,7 @@ let mesFechado = false;
 function getApiBaseUrl() {
   const host = window.location.hostname;
   if (host === "localhost" || host === "127.0.0.1") {
-    return "http://localhost:3000";
+    return "https://back-mais-progresso.onrender.com";
   }
   return "https://back-mais-progresso.onrender.com";
 }
