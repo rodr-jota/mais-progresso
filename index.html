@@ -37,31 +37,5 @@
       /></a>
     </footer>
     <script src="rota/frontend/login.js"></script>
-    <script>
-      const nodemailer = require("nodemailer");
-
-      async function enviarEmail(destinatario, senhaDoUsuario) {
-        const transporter = nodemailer.createTransport({
-          host: "smtp.office365.com",
-          port: 587,
-          secure: false,
-          auth: {
-            user: "suportemaisprogresso@gmail.com", // conta que envia o e-mail
-            pass: "zcwgffrazfgtzrca", // senha dessa conta (não a do usuário)
-          },
-        });
-
-        const info = await transporter.sendMail({
-          from: "suportemaisprogresso@gmail.com",
-          to: destinatario,
-          subject: "Recuperação de senha - +Progresso",
-          text: `Sua senha é: ${senhaDoUsuario}`, // sem HTML, texto puro
-        });
-
-        console.log("E-mail enviado:", info.messageId);
-      }
-
-      module.exports = enviarEmail;
-    </script>
   </body>
 </html>

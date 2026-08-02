@@ -742,6 +742,55 @@ app.get("/coordenador/status-mes/:coordenadorId", async (req, res) => {
   }
 });
 
+const nodemailer = require("nodemailer");
+
+async function enviarEmail(destinatario, senhaDoUsuario) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "suportemaisprogresso@gmail.com",
+      pass: "zcwg ffra zfgt zrca",
+    },
+  });
+
+  const info = await transporter.sendMail({
+    from: "suportemaisprogresso@gmail.com",
+    to: destinatario,
+    subject: "Recuperação de senha - +Progresso",
+    text: `Sua senha é: ${senhaDoUsuario}`,
+  });
+
+  console.log("E-mail enviado:", info.messageId);
+}
+
+app.post("/esqueci-senha", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ erro: "E-mail não informado" });
+    }
+
+    const resultado = await pool.query(
+      "SELECT senha FROM usuarios WHERE email = $1",
+      [email],
+    );
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ erro: "E-mail não encontrado" });
+    }
+
+    const senhaAtual = resultado.rows[0].senha;
+
+    await enviarEmail(email, senhaAtual);
+
+    res.json({ mensagem: "E-mail enviado com sucesso" });
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Falha ao enviar e-mail" });
+  }
+});
+
 // ── ROTA EXCLUSIVA PARA O SLIDER (BUSCA APENAS OS ALUNOS DO COORDENADOR) ──
 app.get("/coordenador/alunos/:coordenadorId", async (req, res) => {
   try {
