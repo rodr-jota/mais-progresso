@@ -240,12 +240,12 @@ app.get("/alunos", async (req, res) => {
 
     if (!mesFiltro) {
       const queryAlunos = `
-    SELECT a.id, u.nome, a.rank_atual, a.qtd_medalhas, a.time
-    FROM alunos a
-    JOIN usuarios u ON a.usuario_id = u.id
-    ${condicaoTime}
-    ORDER BY a.qtd_medalhas DESC, u.nome
-  `;
+  SELECT a.id, u.id AS usuario_id, u.nome, a.rank_atual, a.qtd_medalhas, a.time
+  FROM alunos a
+  JOIN usuarios u ON a.usuario_id = u.id
+  ${condicaoTime}
+  ORDER BY a.qtd_medalhas DESC, u.nome
+`;
       const resultado = await pool.query(queryAlunos, params);
 
       const ids = resultado.rows.map((a) => a.id);
@@ -268,19 +268,20 @@ app.get("/alunos", async (req, res) => {
     const paramIndexMeses = params.length + 1;
 
     const queryAlunos = `
-      SELECT
-        a.id,
-        u.nome,
-        a.time,
-        COALESCE(SUM(pm.medalhas_ganhas), 0) AS qtd_medalhas
-      FROM alunos a
-      JOIN usuarios u ON a.usuario_id = u.id
-      LEFT JOIN progresso_missoes pm
-        ON pm.aluno_id = a.id AND pm.mes = ANY($${paramIndexMeses}::text[])
-      ${condicaoTime}
-      GROUP BY a.id, u.nome, a.time
-      ORDER BY qtd_medalhas DESC, u.nome
-    `;
+  SELECT
+    a.id,
+    u.id AS usuario_id,
+    u.nome,
+    a.time,
+    COALESCE(SUM(pm.medalhas_ganhas), 0) AS qtd_medalhas
+  FROM alunos a
+  JOIN usuarios u ON a.usuario_id = u.id
+  LEFT JOIN progresso_missoes pm
+    ON pm.aluno_id = a.id AND pm.mes = ANY($${paramIndexMeses}::text[])
+  ${condicaoTime}
+  GROUP BY a.id, u.id, u.nome, a.time
+  ORDER BY qtd_medalhas DESC, u.nome
+`;
     params.push(mesesAteFiltro);
 
     const resultado = await pool.query(queryAlunos, params);
