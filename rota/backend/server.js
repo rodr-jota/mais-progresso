@@ -798,7 +798,7 @@ app.get("/coordenador/alunos/:coordenadorId", async (req, res) => {
 
     const resultado = await pool.query(
       `
-      SELECT a.id, u.nome, a.rank_atual, a.qtd_medalhas, a.time
+      SELECT a.id, a.usuario_id, u.nome, a.rank_atual, a.qtd_medalhas, a.time
       FROM alunos a
       JOIN usuarios u ON a.usuario_id = u.id
       WHERE a.coordenador_id = $1
