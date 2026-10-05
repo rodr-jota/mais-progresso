@@ -234,7 +234,7 @@ app.post("/login", async (req, res) => {
 app.get("/alunos", async (req, res) => {
   try {
     const timeFiltro = req.query.time || "Geral";
-    const mesFiltro = req.query.mes || null; // ex: "Abril"
+    const mesFiltro = req.query.mes || null;
 
     let condicaoTime = "";
     let params = [];
@@ -246,12 +246,12 @@ app.get("/alunos", async (req, res) => {
 
     if (!mesFiltro) {
       const queryAlunos = `
-  SELECT a.id, u.id AS usuario_id, u.nome, a.rank_atual, a.qtd_medalhas, a.time
-  FROM alunos a
-  JOIN usuarios u ON a.usuario_id = u.id
-  ${condicaoTime}
-  ORDER BY a.qtd_medalhas DESC, u.nome
-`;
+        SELECT a.id, u.id AS usuario_id, u.nome, a.rank_atual, a.qtd_medalhas, a.time
+        FROM alunos a
+        JOIN usuarios u ON a.usuario_id = u.id
+        ${condicaoTime}
+        ORDER BY a.qtd_medalhas DESC, u.nome
+      `;
       const resultado = await pool.query(queryAlunos, params);
 
       const ids = resultado.rows.map((a) => a.id);
@@ -265,30 +265,46 @@ app.get("/alunos", async (req, res) => {
       return res.json(linhasComSaldo);
     }
 
-    // Com mês: soma acumulada de medalhas até (e incluindo) o mês filtrado
+    // Com mês: soma acumulada de medalhas até (e incluindo) o mês filtrado,
+    // agora lendo de medalha_aluno/medalha/missao em vez de progresso_missoes
     const indexMes = MESES_ORDEM.indexOf(mesFiltro);
     if (indexMes === -1) {
       return res.status(400).json({ erro: "Mês inválido" });
     }
     const mesesAteFiltro = MESES_ORDEM.slice(0, indexMes + 1);
     const paramIndexMeses = params.length + 1;
+    const paramIndexAno = params.length + 2;
 
     const queryAlunos = `
-  SELECT
-    a.id,
-    u.id AS usuario_id,
-    u.nome,
-    a.time,
-    COALESCE(SUM(pm.medalhas_ganhas), 0) AS qtd_medalhas
-  FROM alunos a
-  JOIN usuarios u ON a.usuario_id = u.id
-  LEFT JOIN progresso_missoes pm
-    ON pm.aluno_id = a.id AND pm.mes = ANY($${paramIndexMeses}::text[])
-  ${condicaoTime}
-  GROUP BY a.id, u.id, u.nome, a.time
-  ORDER BY qtd_medalhas DESC, u.nome
-`;
-    params.push(mesesAteFiltro);
+      SELECT
+        a.id,
+        u.id AS usuario_id,
+        u.nome,
+        a.time,
+        COALESCE(conquistas.total, 0) + COALESCE(resgates.total, 0) AS qtd_medalhas
+      FROM alunos a
+      JOIN usuarios u ON a.usuario_id = u.id
+      LEFT JOIN (
+        SELECT ma.aluno_id, COUNT(*) AS total
+        FROM medalha_aluno ma
+        JOIN medalha m ON m.id = ma.medalha_id
+        JOIN missao mi ON mi.id = m.id_missao
+        WHERE ma.checked = true AND mi.titulo <> 'Extra'
+          AND mi.mes = ANY($${paramIndexMeses}::text[]) AND mi.ano = $${paramIndexAno}
+        GROUP BY ma.aluno_id
+      ) conquistas ON conquistas.aluno_id = a.id
+      LEFT JOIN (
+        SELECT mr.aluno_id, COUNT(*) AS total
+        FROM medalha_resgatada mr
+        JOIN medalha m ON m.id = mr.medalha_id
+        JOIN missao mi ON mi.id = m.id_missao
+        WHERE mi.mes = ANY($${paramIndexMeses}::text[]) AND mi.ano = $${paramIndexAno}
+        GROUP BY mr.aluno_id
+      ) resgates ON resgates.aluno_id = a.id
+      ${condicaoTime}
+      ORDER BY qtd_medalhas DESC, u.nome
+    `;
+    params.push(mesesAteFiltro, ANO_ATUAL);
 
     const resultado = await pool.query(queryAlunos, params);
     const linhas = resultado.rows.map((aluno) => ({
@@ -464,30 +480,36 @@ async function saldoMedalhaExtra(alunoId) {
 async function saldosMedalhaExtraEmLote(idsAlunos) {
   if (idsAlunos.length === 0) return {};
 
-  const ganhas = await pool.query(
-    `SELECT aluno_id, COUNT(*) AS total
-     FROM progresso_missoes
-     WHERE extra1 = true AND aluno_id = ANY($1::int[])
-     GROUP BY aluno_id`,
+  const conquistas = await pool.query(
+    `SELECT ma.aluno_id, COUNT(*) AS total
+     FROM medalha_aluno ma
+     JOIN medalha m ON m.id = ma.medalha_id
+     JOIN missao mi ON mi.id = m.id_missao
+     WHERE mi.titulo = 'Extra' AND ma.checked = true AND ma.aluno_id = ANY($1::int[])
+     GROUP BY ma.aluno_id`,
     [idsAlunos],
   );
-  const usadas = await pool.query(
-    `SELECT aluno_id, COALESCE(SUM(quantidade), 0) AS total
-     FROM medalhas_extras_utilizadas
-     WHERE aluno_id = ANY($1::int[])
-     GROUP BY aluno_id`,
+  const resgates = await pool.query(
+    `SELECT mr.aluno_id, COUNT(*) AS total
+     FROM medalha_resgatada mr
+     JOIN medalha m ON m.id = mr.medalha_id
+     JOIN missao mi ON mi.id = m.id_missao
+     WHERE mi.titulo = 'Extra' AND mr.aluno_id = ANY($1::int[])
+     GROUP BY mr.aluno_id`,
     [idsAlunos],
   );
 
-  const mapaGanhas = {};
-  ganhas.rows.forEach((r) => (mapaGanhas[r.aluno_id] = Number(r.total)));
+  const mapaConquistas = {};
+  conquistas.rows.forEach(
+    (r) => (mapaConquistas[r.aluno_id] = Number(r.total)),
+  );
 
-  const mapaUsadas = {};
-  usadas.rows.forEach((r) => (mapaUsadas[r.aluno_id] = Number(r.total)));
+  const mapaResgates = {};
+  resgates.rows.forEach((r) => (mapaResgates[r.aluno_id] = Number(r.total)));
 
   const saldos = {};
   idsAlunos.forEach((id) => {
-    const saldo = (mapaGanhas[id] || 0) - (mapaUsadas[id] || 0);
+    const saldo = (mapaConquistas[id] || 0) - (mapaResgates[id] || 0);
     saldos[id] = Math.max(saldo, 0);
   });
 
