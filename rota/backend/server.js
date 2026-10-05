@@ -684,13 +684,22 @@ app.get("/progresso/:alunoId", async (req, res) => {
   let { ano, mes } = req.query;
 
   try {
+    const alunoResult = await pool.query(
+      `SELECT rank_atual, qtd_medalhas FROM alunos WHERE id = $1`,
+      [alunoId],
+    );
+
     // Se o front não informar ano/mês, usa a missão mais recente cadastrada
     if (!ano || !mes) {
       const ultimaMissao = await pool.query(
         `SELECT ano, mes FROM missao ORDER BY id DESC LIMIT 1`,
       );
       if (ultimaMissao.rows.length === 0) {
-        return res.json({ missoes: [], saldo_medalha_extra: 0 });
+        return res.json({
+          aluno: alunoResult.rows[0] || null,
+          missoes: [],
+          saldo_medalha_extra: 0,
+        });
       }
       ano = ultimaMissao.rows[0].ano;
       mes = ultimaMissao.rows[0].mes;
@@ -752,6 +761,7 @@ app.get("/progresso/:alunoId", async (req, res) => {
       .filter((medalha) => medalha.checked && !medalha.resgatada).length;
 
     res.json({
+      aluno: alunoResult.rows[0] || null,
       ano,
       mes,
       missoes: dados,
