@@ -829,6 +829,125 @@ app.get("/coordenador/meses/:coordenadorId", async (req, res) => {
   }
 });
 
+// PÓS REMODELAGEM DE DADOS
+
+app.get("/missao/:ano/:mes", async (req, res) => {
+  const { ano, mes } = req.params;
+  try {
+    const missoesResult = await pool.query(
+      `SELECT id, titulo FROM missao WHERE ano = $1 AND mes = $2 ORDER BY id`,
+      [ano, mes],
+    );
+    const missoes = missoesResult.rows;
+
+    if (missoes.length === 0) {
+      return res
+        .status(404)
+        .json({ erro: "Nenhuma missão cadastrada para este mês." });
+    }
+
+    const missaoIds = missoes.map((m) => m.id);
+    const medalhasResult = await pool.query(
+      `SELECT id, id_missao, nome, descricao_meta FROM medalha WHERE id_missao = ANY($1::int[]) ORDER BY id`,
+      [missaoIds],
+    );
+
+    const catalogo = missoes.map((missao) => ({
+      ...missao,
+      medalhas: medalhasResult.rows.filter((m) => m.id_missao === missao.id),
+    }));
+
+    res.json(catalogo);
+  } catch (erro) {
+    console.error("Erro ao buscar missões:", erro);
+    res.status(500).json({ erro: "Erro ao buscar missões." });
+  }
+});
+
+app.get("/progresso/:alunoId", async (req, res) => {
+  const { alunoId } = req.params;
+  let { ano, mes } = req.query;
+
+  try {
+    // Se o front não informar ano/mês, usa a missão mais recente cadastrada
+    if (!ano || !mes) {
+      const ultimaMissao = await pool.query(
+        `SELECT ano, mes FROM missao ORDER BY id DESC LIMIT 1`,
+      );
+      if (ultimaMissao.rows.length === 0) {
+        return res.json({ missoes: [], saldo_medalha_extra: 0 });
+      }
+      ano = ultimaMissao.rows[0].ano;
+      mes = ultimaMissao.rows[0].mes;
+    }
+
+    const missoesResult = await pool.query(
+      `SELECT id, titulo FROM missao WHERE ano = $1 AND mes = $2 ORDER BY id`,
+      [ano, mes],
+    );
+    const missoes = missoesResult.rows;
+    const missaoIds = missoes.map((m) => m.id);
+
+    const medalhasResult = missaoIds.length
+      ? await pool.query(
+          `SELECT id, id_missao, nome, descricao_meta FROM medalha WHERE id_missao = ANY($1::int[]) ORDER BY id`,
+          [missaoIds],
+        )
+      : { rows: [] };
+    const medalhaIds = medalhasResult.rows.map((m) => m.id);
+
+    const progressoResult = medalhaIds.length
+      ? await pool.query(
+          `SELECT medalha_id, checked FROM medalha_aluno WHERE aluno_id = $1 AND medalha_id = ANY($2::int[])`,
+          [alunoId, medalhaIds],
+        )
+      : { rows: [] };
+    const checadoPorMedalha = {};
+    progressoResult.rows.forEach((linha) => {
+      checadoPorMedalha[linha.medalha_id] = linha.checked;
+    });
+
+    const resgatesResult = medalhaIds.length
+      ? await pool.query(
+          `SELECT medalha_id FROM medalha_resgatada WHERE aluno_id = $1 AND medalha_id = ANY($2::int[])`,
+          [alunoId, medalhaIds],
+        )
+      : { rows: [] };
+    const resgatadoPorMedalha = new Set(
+      resgatesResult.rows.map((r) => r.medalha_id),
+    );
+
+    const dados = missoes.map((missao) => ({
+      id: missao.id,
+      titulo: missao.titulo,
+      medalhas: medalhasResult.rows
+        .filter((m) => m.id_missao === missao.id)
+        .map((m) => ({
+          id: m.id,
+          nome: m.nome,
+          descricao_meta: m.descricao_meta,
+          checked: checadoPorMedalha[m.id] || false,
+          resgatada: resgatadoPorMedalha.has(m.id),
+        })),
+    }));
+
+    const saldoMedalhaExtra = dados
+      .filter((missao) => missao.titulo === "Extra")
+      .flatMap((missao) => missao.medalhas)
+      .filter((medalha) => medalha.checked && !medalha.resgatada).length;
+
+    res.json({
+      ano,
+      mes,
+      missoes: dados,
+      saldo_medalha_extra: saldoMedalhaExtra,
+    });
+  } catch (erro) {
+    console.error("Erro ao buscar progresso do aluno:", erro);
+    res.status(500).json({ erro: "Erro ao buscar progresso do aluno." });
+  }
+});
+
 // =====================
 // ROTA: VERIFICAR STATUS DO MÊS PARA O COORDENADOR
 // =====================
