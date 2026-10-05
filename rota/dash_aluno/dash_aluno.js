@@ -3,6 +3,9 @@ const track = document.querySelector(".slider-track");
 const cards = document.querySelectorAll(".card");
 let currentIndex = 0;
 
+const ANO_ATUAL = 2026;
+const DURACAO_ANIMACAO_BARRA = 1650; // 0.55s (delay) + 1.1s (transição), direto do CSS
+
 const mapaMeses = {
   ABR: "Abril",
   MAI: "Maio",
@@ -13,6 +16,7 @@ const mapaMeses = {
   NOV: "Novembro",
 };
 let mesSelecionado = "Abril";
+let medalhasAtuais = []; // lista plana de todas as medalhas do mês carregado, com flag `extra`
 
 function updateSlider() {
   const cardWidth = cards[0].getBoundingClientRect().width;
@@ -37,71 +41,73 @@ document.querySelectorAll(".btn-prev").forEach((btn) => {
   });
 });
 
-const btn = document.getElementById("toggleLideranca");
-const card = document.getElementById("missionCard");
+// ── Toggle genérico: abre/fecha um conjunto de mission-cards dentro de um container ──
+function configurarToggle(botaoId, containerId) {
+  const botao = document.getElementById(botaoId);
+  const container = document.getElementById(containerId);
 
-const card2 = document.getElementById("missionCard2");
+  botao.addEventListener("click", () => {
+    const estaAberto = botao.classList.contains("open");
+    const cardsAtuais = [...container.querySelectorAll(".mission-card")];
 
-const btn_2 = document.getElementById("toggleTino");
-const card_2 = document.getElementById("missionCard_2");
+    if (estaAberto) {
+      cardsAtuais.forEach((c) => {
+        c.classList.remove("show");
+        c.querySelectorAll(".bar-star").forEach((estrela) =>
+          estrela.classList.remove("revelada"),
+        );
+      });
+      botao.classList.remove("open");
+      return;
+    }
 
-const card2_2 = document.getElementById("missionCard2_2");
-
-const btn_3 = document.getElementById("toggleExtra");
-
-const card_3 = document.getElementById("missionCard_3");
-
-function toggleMissionCards(btn, cards, idsEstrelas = []) {
-  const estaAberto = btn.classList.contains("open");
-
-  if (estaAberto) {
-    cards.forEach((c) => c.classList.remove("show"));
-    idsEstrelas.forEach((id) => {
-      const estrela = document.getElementById(id);
-      if (estrela) estrela.classList.remove("revelada");
+    cardsAtuais.forEach((c) => {
+      c.querySelectorAll(".bar-fill").forEach((barra) => {
+        barra.style.transition = "none";
+        barra.style.width = "";
+      });
     });
-    btn.classList.remove("open");
-    return;
-  }
 
-  cards.forEach((c) => {
-    c.querySelectorAll(".bar-fill").forEach((barra) => {
-      barra.style.transition = "none";
-      barra.style.width = "";
+    if (cardsAtuais[0]) void cardsAtuais[0].offsetHeight;
+
+    cardsAtuais.forEach((c) => {
+      c.querySelectorAll(".bar-fill").forEach((barra) => {
+        barra.style.transition = "";
+      });
+      c.classList.add("show");
     });
+    botao.classList.add("open");
+
+    setTimeout(
+      () => revelarEstrelasDoContainer(cardsAtuais),
+      DURACAO_ANIMACAO_BARRA,
+    );
   });
-
-  void cards[0].offsetHeight;
-
-  cards.forEach((c) => {
-    c.querySelectorAll(".bar-fill").forEach((barra) => {
-      barra.style.transition = "";
-    });
-    c.classList.add("show");
-  });
-  btn.classList.add("open");
-
-  setTimeout(() => revelarEstrelas(idsEstrelas), DURACAO_ANIMACAO_BARRA);
 }
 
-btn.addEventListener("click", () =>
-  toggleMissionCards(
-    btn,
-    [card, card2],
-    ["star-check-in", "star-tma", "star-matinal", "star-checkin_8"],
-  ),
-);
-btn_2.addEventListener("click", () =>
-  toggleMissionCards(btn_2, [card_2, card2_2], ["star-analise", "star-olhar"]),
-);
-btn_3.addEventListener("click", () => toggleMissionCards(btn_3, [card_3], []));
+function revelarEstrelasDoContainer(cardsAtuais) {
+  cardsAtuais.forEach((c) => {
+    const medalhaId = Number(c.dataset.medalhaId);
+    const medalha = medalhasAtuais.find((m) => m.id === medalhaId);
+    if (medalha && medalha.checked) {
+      c.querySelectorAll(".bar-star").forEach((estrela) =>
+        estrela.classList.add("revelada"),
+      );
+    }
+  });
+}
 
+configurarToggle("toggleLideranca", "containerLideranca");
+configurarToggle("toggleTino", "containerTino");
+configurarToggle("toggleExtra", "containerExtra");
+
+// ── Carrega os dados do mês selecionado ──────────────────────────
 async function carregarProgresso() {
   preencherNomeUsuario();
 
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   const resposta = await fetch(
-    `https://back-mais-progresso.onrender.com/progresso/${usuario.aluno_id}?mes=${encodeURIComponent(mesSelecionado)}`,
+    `https://back-mais-progresso.onrender.com/progresso/${usuario.aluno_id}?ano=${ANO_ATUAL}&mes=${encodeURIComponent(mesSelecionado)}`,
   );
 
   const dados = await resposta.json();
@@ -109,20 +115,24 @@ async function carregarProgresso() {
   preencherMissoes(dados);
   verificarMedalhasExtras(dados);
 
-  // Se algum toggle já estava aberto, reagenda a revelação das estrelas dele
+  // Se algum toggle já estava aberto, reabre os cards e reagenda a revelação das estrelas
   [
-    {
-      botao: btn,
-      estrelas: ["star-check-in", "star-tma", "star-matinal", "star-checkin_8"],
-    },
-    { botao: btn_2, estrelas: ["star-analise", "star-olhar"] },
-  ].forEach(({ botao, estrelas }) => {
-    estrelas.forEach((id) => {
-      const estrela = document.getElementById(id);
-      if (estrela) estrela.style.display = "block";
-    });
+    { botaoId: "toggleLideranca", containerId: "containerLideranca" },
+    { botaoId: "toggleTino", containerId: "containerTino" },
+    { botaoId: "toggleExtra", containerId: "containerExtra" },
+  ].forEach(({ botaoId, containerId }) => {
+    const botao = document.getElementById(botaoId);
     if (botao.classList.contains("open")) {
-      setTimeout(() => revelarEstrelas(estrelas), DURACAO_ANIMACAO_BARRA);
+      const cardsAtuais = [
+        ...document
+          .getElementById(containerId)
+          .querySelectorAll(".mission-card"),
+      ];
+      cardsAtuais.forEach((c) => c.classList.add("show"));
+      setTimeout(
+        () => revelarEstrelasDoContainer(cardsAtuais),
+        DURACAO_ANIMACAO_BARRA,
+      );
     }
   });
 }
@@ -173,7 +183,11 @@ document.addEventListener("DOMContentLoaded", () => {
   aplicarBloqueioMesesAluno();
   carregarProgresso();
 });
+
+// ── Slider de rank ──────────────────────────
 function preencherRank(dados) {
+  if (!dados.aluno) return;
+
   const ranks = [
     "bronze",
     "prata",
@@ -191,7 +205,7 @@ function preencherRank(dados) {
   currentIndex = indiceRank;
   updateSlider();
 
-  const LIMITE_ATE_MESTRE = 15; // 3 × 5 ranks antes do Mestre
+  const LIMITE_ATE_MESTRE = 15;
 
   ranks.forEach((rank, index) => {
     const card = document.getElementById(rank);
@@ -201,7 +215,6 @@ function preencherRank(dados) {
     const contador = card.querySelector(".contagem");
     if (!barra || !contador) return;
 
-    // Mestre (índice 5) exige 5 medalhas; os outros exigem 3
     const tamanhoDesteRank = index === 5 ? 5 : 3;
 
     if (index < indiceRank) {
@@ -220,193 +233,171 @@ function preencherRank(dados) {
     }
   });
 }
-const DURACAO_ANIMACAO_BARRA = 1650; // 0.55s (delay) + 1.1s (transição), direto do CSS
-let criteriosMissoes = {};
 
-function revelarEstrelas(idsEstrelas) {
-  idsEstrelas.forEach((id) => {
-    const estrela = document.getElementById(id);
-    if (estrela && criteriosMissoes[id]) {
-      estrela.classList.add("revelada");
-    }
-  });
-}
+// ── Monta os cards de missão dinamicamente ──────────────────────────
+function renderizarMissao(containerId, medalhas) {
+  const container = document.getElementById(containerId);
 
-function horaParaMinutos(horaTexto) {
-  if (!horaTexto) return null;
-  const [h, m] = String(horaTexto).split(":").map(Number);
-  return h * 60 + (m || 0);
+  container.innerHTML = medalhas
+    .map((medalha, index) => {
+      const ehExtra = Boolean(medalha.extra);
+      const estiloBarraOuro = ehExtra ? "; background:#FDA827" : "";
+
+      return `
+        <div class="mission-card" data-medalha-id="${medalha.id}">
+          <div class="mission-left" style="margin-top: -23px">
+            <h2>Missão ${index + 1}</h2>
+            <div class="medal-area">
+              <img class="medal-grey" src="../frontend/assets/medal1.svg" alt="Medalha cinza"
+                   style="width:113px; opacity:${medalha.checked ? 0 : 1}" />
+              <img class="medal-blue" src="../frontend/assets/${ehExtra ? "medal3.svg" : "medal2.svg"}" alt="Medalha conquistada"
+                   style="width:113px; opacity:${medalha.checked ? 1 : 0}" />
+            </div>
+          </div>
+
+          <div class="mission-divider"></div>
+
+          <div class="mission-right">
+            <div class="metric">
+              <div class="metric-title">${medalha.nome}</div>
+              <div class="bar">
+                <div class="bar-fill" style="--target: ${medalha.checked ? "100%" : "11%"}${estiloBarraOuro}">
+                  <span class="bar-value">${medalha.checked ? "Concluída" : "Pendente"}</span>
+                  <span class="bar-star">★</span>
+                </div>
+              </div>
+            </div>
+
+            ${
+              medalha.descricao_meta
+                ? `
+            <div class="metric">
+              <div class="metric-title"></div>
+              <div class="bar">
+                <div class="bar-fill" style="--target: 100%${estiloBarraOuro}">
+                  <span class="bar-value" style="display:flex; align-items:center; gap:16px;">
+                    <img src="../frontend/assets/Group 343.svg" width="31px" style="margin-left:-24px;" alt="" />
+                    ${medalha.descricao_meta}
+                  </span>
+                </div>
+              </div>
+            </div>`
+                : ""
+            }
+          </div>
+        </div>`;
+    })
+    .join("");
 }
 
 function preencherMissoes(dados) {
-  document.getElementById("star-check-in").classList.remove("revelada");
-  document.getElementById("star-tma").classList.remove("revelada");
-  document.getElementById("star-matinal").classList.remove("revelada");
-  document.getElementById("star-checkin_8").classList.remove("revelada");
-  document.getElementById("star-analise").classList.remove("revelada");
-  document.getElementById("star-olhar").classList.remove("revelada");
-  if (!dados.resultados || !dados.progresso) {
-    // CORREÇÃO TALVEZ DESNECESSÁRIA
-    console.log(
-      "Dados de progresso/resultado não encontrados. Missões não disponíveis.",
+  const missoes = dados.missoes || [];
+  const missaoLideranca = missoes.find((m) => m.titulo === "Liderança");
+  const missaoExtra = missoes.find((m) => m.titulo === "Extra");
+  const missaoMeio = missoes.find(
+    (m) => m.titulo !== "Liderança" && m.titulo !== "Extra",
+  );
+
+  medalhasAtuais = missoes.flatMap((m) =>
+    m.medalhas.map((med) => ({ ...med, extra: m.titulo === "Extra" })),
+  );
+
+  renderizarMissao(
+    "containerLideranca",
+    (missaoLideranca ? missaoLideranca.medalhas : []).map((m) => ({
+      ...m,
+      extra: false,
+    })),
+  );
+
+  const botaoMeio = document.getElementById("toggleTino");
+  const containerMeio = document.getElementById("containerTino");
+  if (missaoMeio && missaoMeio.medalhas.length > 0) {
+    botaoMeio.textContent = missaoMeio.titulo; // nome real da categoria daquele mês
+    botaoMeio.style.display = "";
+    renderizarMissao(
+      "containerTino",
+      missaoMeio.medalhas.map((m) => ({ ...m, extra: false })),
     );
-
-    // Como as missões não podem ser renderizadas, garantimos que as medalhas fiquem cinzas.
-    // (Se o card não existir, o código ignora silenciosamente)
-    const cards = [
-      "missionCard",
-      "missionCard2",
-      "missionCard_2",
-      "missionCard2_2",
-      "missionCard_3",
-    ];
-    cards.forEach((id) => {
-      const card = document.getElementById(id);
-      if (card) {
-        const cinza = card.querySelector(".medal-grey");
-        const azul = card.querySelector(".medal-blue");
-        if (cinza) cinza.style.opacity = "1";
-        if (azul) azul.style.opacity = "0";
-      }
-    });
-
-    return;
-  }
-
-  console.log("CHECKIN:", dados.resultados.checkin);
-  console.log("TMA:", dados.resultados.tma);
-  console.log("MATINAL:", dados.resultados.interacao_matinal);
-  console.log("CHECKIN8:", dados.resultados.checkin_8);
-  console.log("TINO1:", dados.progresso.tino1);
-  console.log("TINO2:", dados.progresso.tino2);
-  // console.log("EXTRA:", dados.progresso.medalhas_extra_ganhas);
-
-  const checkin = parseFloat(dados.resultados.checkin.replace("%", ""));
-  const checkinOk = checkin >= 90;
-  criteriosMissoes["star-check-in"] = checkinOk;
-  document.getElementById("bar-checkin").innerHTML = checkin + "%";
-
-  const tma = parseFloat(dados.resultados.tma);
-  const tmaOk = tma >= 3.5;
-  criteriosMissoes["star-tma"] = tmaOk;
-  document.getElementById("bar-tma").innerHTML =
-    `0${Math.floor(tma)}:${String(Math.round((tma - Math.floor(tma)) * 60)).padStart(2, "0")}`;
-  const matinal = Number(dados.resultados.interacao_matinal);
-  const matinalOk = matinal >= 1;
-  criteriosMissoes["star-matinal"] = matinalOk;
-  document.getElementById("bar-matinal").innerHTML = `${matinal}/1`;
-
-  const checkin8 = dados.resultados.checkin_8;
-  const LIMITE_CHECKIN8 = 8 * 60 + 5;
-  const checkin8Ok = horaParaMinutos(checkin8) <= LIMITE_CHECKIN8;
-  criteriosMissoes["star-checkin_8"] = checkin8Ok;
-  document.getElementById("valor-checkin8").innerHTML = `${checkin8}`;
-
-  // checkin tem escala 0-100 natural; os outros três são critérios sim/não,
-  // então a barra preenche 100% quando a estrela daquele critério é conquistada
-  document
-    .getElementById("fill-checkin")
-    .style.setProperty("--target", checkinOk ? "100%" : `${checkin}%`);
-  document
-    .getElementById("fill-tma")
-    .style.setProperty("--target", tmaOk ? "100%" : "11%");
-  document
-    .getElementById("fill-matinal")
-    .style.setProperty("--target", matinalOk ? "100%" : "11%");
-  document
-    .getElementById("fill-checkin_8")
-    .style.setProperty("--target", checkin8Ok ? "100%" : "11%");
-
-  document.getElementById("bar-analise").innerHTML = dados.progresso.tino1
-    ? "1/1"
-    : "0/1";
-  criteriosMissoes["star-analise"] = !!dados.progresso.tino1;
-  document
-    .getElementById("preench-de-dados1")
-    .style.setProperty("--target", dados.progresso.tino1 ? "100%" : "9%");
-
-  document.getElementById("bar-olhar").innerHTML = dados.progresso.tino2
-    ? "1/1"
-    : "0/1";
-  criteriosMissoes["star-olhar"] = !!dados.progresso.tino2;
-  document
-    .getElementById("preench-da-carteira")
-    .style.setProperty("--target", dados.progresso.tino2 ? "100%" : "9%");
-
-  document.getElementById("value-extra").innerHTML = dados.progresso.extra1
-    ? "1/1"
-    : "0/1";
-  document
-    .getElementById("preench-extra")
-    .style.setProperty("--target", dados.progresso.extra1 ? "100%" : "9%");
-
-  atualizarMissao("missionCard", dados.progresso.lideranca1);
-  atualizarMissao("missionCard2", dados.progresso.lideranca2);
-  atualizarMissao("missionCard_2", dados.progresso.tino1);
-  atualizarMissao("missionCard2_2", dados.progresso.tino2);
-  atualizarMissao("missionCard_3", dados.progresso.extra1);
-}
-
-function atualizarMissao(cardId, concluida) {
-  const card = document.getElementById(cardId);
-  const medalhaAzul = card.querySelector(".medal-blue");
-  const medalhaCinza = card.querySelector(".medal-grey");
-
-  if (concluida) {
-    medalhaAzul.style.opacity = "1";
-    medalhaCinza.style.opacity = "0";
   } else {
-    medalhaAzul.style.opacity = "0";
-    medalhaCinza.style.opacity = "1";
+    botaoMeio.classList.remove("open");
+    botaoMeio.style.display = "none";
+    containerMeio.innerHTML = "";
+  }
+
+  const botaoExtra = document.getElementById("toggleExtra");
+  const containerExtra = document.getElementById("containerExtra");
+  if (missaoExtra && missaoExtra.medalhas.length > 0) {
+    botaoExtra.style.display = "";
+    renderizarMissao(
+      "containerExtra",
+      missaoExtra.medalhas.map((m) => ({ ...m, extra: true })),
+    );
+  } else {
+    botaoExtra.classList.remove("open");
+    botaoExtra.style.display = "none";
+    containerExtra.innerHTML = "";
   }
 }
 
+// ── Resgate da medalha extra ──────────────────────────
 const btnResgate = document.getElementById("right");
 const popBack = document.getElementById("pop-up-background");
 const pop = document.getElementById("pop-up");
-btnResgate.addEventListener("click", function aparecerResgate() {
+
+btnResgate.addEventListener("click", function () {
   popBack.style.display = "flex";
 });
 
-popBack.addEventListener("click", function surmirResgate() {
+popBack.addEventListener("click", function () {
   popBack.style.display = "none";
 });
 
 pop.addEventListener("click", function (event) {
-  event.stopPropagation(); // Impede que o clique "suba" para o background
+  event.stopPropagation();
 });
 
-const popNao = document.getElementById("nao");
-popNao.addEventListener("click", function () {
+document.getElementById("nao").addEventListener("click", function () {
   popBack.style.display = "none";
 });
 
 document.getElementById("sim").addEventListener("click", async function () {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const medalhaExtra = medalhasAtuais.find(
+    (m) => m.extra && m.checked && !m.resgatada,
+  );
+
+  if (!medalhaExtra) {
+    alert("Nenhuma medalha extra disponível para resgate.");
+    popBack.style.display = "none";
+    return;
+  }
 
   const resposta = await fetch(
     "https://back-mais-progresso.onrender.com/usar-medalha-extra",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ aluno_id: usuario.aluno_id }),
+      body: JSON.stringify({
+        alunoId: usuario.aluno_id,
+        medalhaId: medalhaExtra.id,
+      }),
     },
   );
 
   const dados = await resposta.json();
 
   if (resposta.ok) {
-    alert("Medalha usada com sucesso! Saldo restante: " + dados.saldo_restante);
-
-    // 🔽 Fecha o pop-up e recarrega os dados sem dar refresh na página inteira
+    alert(
+      "Medalha usada com sucesso! Total de medalhas: " + dados.qtd_medalhas,
+    );
     popBack.style.display = "none";
-    carregarProgresso(); // Chama a função de carregar dados novamente
+    carregarProgresso();
   } else {
     alert("Erro: " + dados.erro);
   }
 });
 
-// ── Função para calcular e exibir o saldo de medalhas extras ──
 function verificarMedalhasExtras(dados) {
   const saldo = Number(dados.saldo_medalha_extra || 0);
 
@@ -424,7 +415,6 @@ function verificarMedalhasExtras(dados) {
 function preencherNomeUsuario() {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   if (usuario && usuario.nome) {
-    // Procura o <strong> dentro do <h1> do seu título e troca o texto
     document.querySelector("#titulo h1 strong").textContent = usuario.nome;
   }
 }

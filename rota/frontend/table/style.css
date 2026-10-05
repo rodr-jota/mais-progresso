@@ -61,14 +61,14 @@ nav {
   align-items: center;
 }
 #titulos .titulo#lideranca {
-  width: 470px;
+  width: 385px;
 }
 #titulos .titulo#tino {
-  width: 327px;
+  width: 385px;
 }
 #titulos .titulo#extra {
-  width: 160px;
-  background-color: #D29D35;
+  width: 188px;
+  background-color: #d29d35;
 }
 
 table {
@@ -91,8 +91,8 @@ th.tino {
 }
 th.extra {
   width: 160px;
-  background-color: #E6D1BE;
-  color: #C18713;
+  background-color: #e6d1be;
+  color: #c18713;
 }
 
 .aluno {
@@ -156,14 +156,14 @@ input {
   transform: scale(1);
 }
 .checkzin.extra {
-  background-color: #E6D1BE;
+  background-color: #e6d1be;
 }
 .checkzin.extra:checked {
-  background-color: #D29D35;
+  background-color: #d29d35;
 }
 
 td.df {
-  width: 114px;
+  width: 188px;
 }
 
 i {

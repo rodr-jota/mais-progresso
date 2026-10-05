@@ -70,6 +70,128 @@ h1 > strong {
   transition: 200ms ease;
 }
 
+#container-podio {
+  margin-top: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  width: 100%;
+  gap: 26px;
+  position: relative;
+}
+#container-podio .lugar {
+  background-color: #f0f1fc;
+  border-radius: 16px;
+  width: 269px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0px 0px 6px #0000003f);
+}
+#container-podio .lugar#segundo {
+  height: 377px;
+}
+#container-podio .lugar#primeiro {
+  height: 452px;
+}
+#container-podio .lugar#terceiro {
+  height: 344px;
+}
+#container-podio .lugar .bloco-aluno-imagem {
+  position: absolute;
+  top: -86px;
+  width: 269px;
+  right: -78px;
+}
+#container-podio .lugar .bloco-aluno-imagem > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  top: 36px;
+  left: 26px;
+}
+#container-podio .lugar .bloco-aluno-imagem > div .posicao {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  top: -14px;
+  position: relative;
+}
+#container-podio .lugar .bloco-aluno-imagem .aluno-imagem {
+  border-radius: 50%;
+  width: 118px;
+  height: 116px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+}
+#container-podio .lugar .bloco-aluno-imagem .aluno-imagem img {
+  width: 133px;
+}
+#container-podio .aluno-equipe {
+  font-size: 20px;
+  color: #00158c;
+  margin-top: 110px;
+  z-index: 3;
+}
+#container-podio .nome {
+  width: 241px;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 600;
+  color: black;
+  margin-top: 10px;
+}
+
+#container-podio .n-medalhas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background-color: #e8e8e8;
+  width: 198px;
+  height: 79px;
+  border-radius: 15px;
+}
+#container-podio #segundo .n-medalhas {
+  margin-top: 77px;
+}
+#container-podio #primeiro .n-medalhas {
+  margin-top: 153px;
+}
+#container-podio #terceiro .n-medalhas {
+  margin-top: 47px;
+}
+#container-podio .lugar#segundo .bloco-aluno-imagem .aluno-imagem {
+  background: #afafaf;
+}
+#container-podio .lugar#primeiro .bloco-aluno-imagem .aluno-imagem {
+  background: #fda827;
+}
+#container-podio .lugar#terceiro .bloco-aluno-imagem .aluno-imagem {
+  background: #5b381c;
+}
+#container-podio .lugar#segundo .bloco-aluno-imagem > div {
+  background-color: #afafaf;
+}
+#container-podio .lugar#primeiro .bloco-aluno-imagem > div {
+  background-color: #fda827;
+}
+#container-podio .lugar#terceiro .bloco-aluno-imagem > div {
+  background-color: #5b381c;
+}
+
+#container-podio .n-medalhas .n {
+  font-size: 70px;
+  font-weight: 700;
+  color: #001693;
+}
+
 #btn-exportar-dados:hover {
   background-color: #e0e5ff;
   /* border-radius: 20px; */
@@ -686,4 +808,18 @@ footer {
 }
 .icon-laranja {
   margin-right: 20px;
+}
+.div-perfil-imagem {
+  width: 80px;
+  height: 80px;
+  background-color: gray;
+  position: relative;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.perfil-imagem {
+  width: 110%;
+  /* position: absolute; */
 }

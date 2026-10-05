@@ -1,3 +1,84 @@
+let catalogoMedalhas = []; // lista plana de {id, nome, id_missao, titulo_missao}
+const ANO_ATUAL = 2026;
+
+let mesAtual = null;
+let coordenadorIdAtual = null;
+let mesFechado = false;
+
+async function carregarCatalogoDoMes() {
+  const resposta = await fetch(
+    `https://back-mais-progresso.onrender.com/missao/${ANO_ATUAL}/${encodeURIComponent(mesAtual)}`,
+  );
+  if (!resposta.ok) {
+    catalogoMedalhas = [];
+    return;
+  }
+  const missoes = await resposta.json();
+  catalogoMedalhas = missoes.flatMap((missao) =>
+    missao.medalhas.map((m) => ({ ...m, titulo_missao: missao.titulo })),
+  );
+
+  // Atualiza os rótulos decorativos acima da tabela (Liderança / categoria do meio / Extra)
+  const missaoMeio = missoes.find(
+    (m) => m.titulo !== "Liderança" && m.titulo !== "Extra",
+  );
+  const missaoExtra = missoes.find((m) => m.titulo === "Extra");
+
+  const tituloTino = document.getElementById("tino");
+  if (missaoMeio) {
+    tituloTino.textContent = missaoMeio.titulo;
+    tituloTino.style.display = "";
+  } else {
+    tituloTino.style.display = "none";
+  }
+
+  const tituloExtra = document.getElementById("extra");
+  tituloExtra.style.display = missaoExtra ? "" : "none";
+
+  // Monta o cabeçalho da tabela dinamicamente
+  const cabecalho = document.getElementById("cabecalho-tabela");
+  cabecalho.innerHTML = "<th>Aluno</th>";
+  catalogoMedalhas.forEach((medalha) => {
+    const classeExtra =
+      medalha.titulo_missao === "Extra" ? ' class="extra"' : "";
+    cabecalho.innerHTML += `<th${classeExtra}>${medalha.nome}</th>`;
+  });
+}
+
+async function carregarAlunos() {
+  if (!coordenadorIdAtual) return;
+
+  await carregarCatalogoDoMes();
+
+  const resposta = await fetch(
+    `https://back-mais-progresso.onrender.com/coordenador/alunos/${coordenadorIdAtual}`,
+  );
+  const alunos = await resposta.json();
+  const tbody = document.getElementById("tabela-alunos");
+  tbody.innerHTML = "";
+
+  alunos.forEach((aluno) => {
+    const checkboxes = catalogoMedalhas
+      .map((medalha) => {
+        const classeExtra = medalha.titulo_missao === "Extra" ? " extra" : "";
+        return `<td class="df"><input class="checkzin${classeExtra}" type="checkbox" data-medalha-id="${medalha.id}"></td>`;
+      })
+      .join("");
+
+    tbody.innerHTML += `
+      <tr data-id="${aluno.id}">
+        <td class="aluno">${aluno.nome}</td>
+        ${checkboxes}
+      </tr>
+    `;
+  });
+
+  ativarColagem();
+  salvarRascunhoLocal();
+  await carregarDadosDoMes();
+  recuperarRascunhoLocal();
+}
+
 function ativarColagem() {
   const rows = [...document.querySelectorAll("tbody tr")];
 
@@ -9,7 +90,6 @@ function ativarColagem() {
         e.preventDefault();
 
         const clipboard = e.clipboardData || window.clipboardData;
-
         const text = clipboard.getData("text");
 
         const values = text
@@ -20,13 +100,11 @@ function ativarColagem() {
 
         values.forEach((value, i) => {
           const targetRow = rows[rowIndex + i];
-
           if (!targetRow) return;
 
           const targetInputs = [
             ...targetRow.querySelectorAll("td:not(.df) input"),
           ];
-
           const targetInput = targetInputs[colIndex];
 
           if (targetInput) {
@@ -51,68 +129,36 @@ function obterUsuarioAtual() {
   }
 }
 
-function obterChaveRascunho(alunoId, indexInput) {
+function obterChaveRascunho(alunoId, medalhaId) {
   const chaveBase = `rascunho_${coordenadorIdAtual || "sem-coordenador"}_${mesAtual || "sem-mes"}`;
-  return `${chaveBase}_${alunoId}_${indexInput}`;
+  return `${chaveBase}_${alunoId}_${medalhaId}`;
 }
 
-// ── Função para salvar automaticamente os inputs no localStorage ──
 function salvarRascunhoLocal() {
-  const linhas = document.querySelectorAll("#tabela-alunos tr");
-
-  linhas.forEach((linha, indexLinha) => {
+  document.querySelectorAll("#tabela-alunos tr").forEach((linha) => {
     const alunoId = linha.dataset.id;
     if (!alunoId) return;
 
-    const inputs = linha.querySelectorAll("input");
-    inputs.forEach((input, indexInput) => {
-      const chave = obterChaveRascunho(alunoId, indexInput);
-
-      // Salva o valor no localStorage sempre que o usuário digitar
+    linha.querySelectorAll("input[data-medalha-id]").forEach((input) => {
+      const chave = obterChaveRascunho(alunoId, input.dataset.medalhaId);
       input.addEventListener("input", () => {
-        if (input.type === "checkbox") {
-          localStorage.setItem(chave, input.checked ? "true" : "false");
-        } else {
-          localStorage.setItem(chave, input.value);
-        }
+        localStorage.setItem(chave, input.checked ? "true" : "false");
       });
     });
   });
 }
-// ── Função para recuperar os dados do localStorage ao carregar a página ──
-function recuperarRascunhoLocal() {
-  const linhas = document.querySelectorAll("#tabela-alunos tr");
 
-  linhas.forEach((linha) => {
+function recuperarRascunhoLocal() {
+  document.querySelectorAll("#tabela-alunos tr").forEach((linha) => {
     const alunoId = linha.dataset.id;
     if (!alunoId) return;
 
-    const inputs = linha.querySelectorAll("input");
-    inputs.forEach((input, indexInput) => {
-      const chave = obterChaveRascunho(alunoId, indexInput);
+    linha.querySelectorAll("input[data-medalha-id]").forEach((input) => {
+      const chave = obterChaveRascunho(alunoId, input.dataset.medalhaId);
       const valorSalvo = localStorage.getItem(chave);
-
-      if (valorSalvo !== null) {
-        if (input.type === "checkbox") {
-          input.checked = valorSalvo === "true";
-        } else {
-          input.value = valorSalvo;
-        }
-      }
+      if (valorSalvo !== null) input.checked = valorSalvo === "true";
     });
   });
-}
-
-let mesAtual = null;
-let coordenadorIdAtual = null;
-let mesFechado = false;
-
-function getApiBaseUrl() {
-  const host = window.location.hostname;
-  if (host === "localhost" || host === "127.0.0.1") {
-    return "https://back-mais-progresso.onrender.com";
-  }
-  return "https://back-mais-progresso.onrender.com";
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -186,86 +232,26 @@ async function verificarStatusMes() {
 async function carregarDadosDoMes() {
   if (!coordenadorIdAtual || !mesAtual) return;
 
-  try {
-    const resposta = await fetch(
-      `https://back-mais-progresso.onrender.com/coordenador/resultados/${coordenadorIdAtual}?mes=${encodeURIComponent(mesAtual)}`,
-    );
-    if (!resposta.ok) return;
-
-    const dados = await resposta.json();
-    const linhas = document.querySelectorAll("#tabela-alunos tr");
-
-    linhas.forEach((linha) => {
-      const alunoId = Number(linha.dataset.id);
-      const registro = dados.find((item) => Number(item.aluno_id) === alunoId);
-
-      if (!registro) return;
-
-      const inputs = linha.querySelectorAll("input");
-
-      if (inputs[0]) inputs[0].value = registro.checkin ?? "";
-      if (inputs[1]) inputs[1].value = registro.tma ?? "";
-      if (inputs[2]) inputs[2].value = registro.interacao_matinal ?? "";
-      if (inputs[3]) inputs[3].value = registro.checkin_8 ?? "";
-      if (inputs[4]) inputs[4].checked = Boolean(registro.analise_dados);
-      if (inputs[5]) inputs[5].checked = Boolean(registro.olhar_estrategico);
-      if (inputs[6]) inputs[6].checked = Boolean(registro.analise_carteira);
-    });
-  } catch (erro) {
-    console.error("Erro ao carregar dados do mês:", erro);
-  }
-}
-
-async function carregarAlunos() {
-  if (!coordenadorIdAtual) {
-    const tituloMes = document.getElementById("mes");
-    if (tituloMes) {
-      tituloMes.textContent = "Usuário não identificado";
-    }
-    return;
-  }
-
   const resposta = await fetch(
-    `https://back-mais-progresso.onrender.com/coordenador/alunos/${coordenadorIdAtual}`,
+    `https://back-mais-progresso.onrender.com/coordenador/resultados/${coordenadorIdAtual}?mes=${encodeURIComponent(mesAtual)}`,
   );
+  if (!resposta.ok) return;
 
-  const alunos = await resposta.json();
+  const dados = await resposta.json();
+  const linhas = document.querySelectorAll("#tabela-alunos tr");
 
-  const tbody = document.getElementById("tabela-alunos");
+  linhas.forEach((linha) => {
+    const alunoId = Number(linha.dataset.id);
+    const registro = dados.find((item) => Number(item.aluno_id) === alunoId);
+    if (!registro) return;
 
-  tbody.innerHTML = "";
-
-  alunos.forEach((aluno) => {
-    tbody.innerHTML += `
-      <tr data-id="${aluno.id}">
-        <td class="aluno">${aluno.nome}</td>
-
-        <td><input></td>
-        <td><input></td>
-        <td><input></td>
-        <td><input></td>
-
-        <td class="df">
-          <input class="checkzin" type="checkbox">
-        </td>
-
-        <td class="df">
-          <input class="checkzin" type="checkbox">
-        </td>
-
-        <td class="df">
-          <input class="checkzin extra" type="checkbox">
-        </td>
-      </tr>
-    `;
+    registro.medalhas.forEach(({ medalha_id, checked }) => {
+      const checkbox = linha.querySelector(
+        `input[data-medalha-id="${medalha_id}"]`,
+      );
+      if (checkbox) checkbox.checked = Boolean(checked);
+    });
   });
-
-  // IMPORTANTE
-  ativarColagem();
-
-  salvarRascunhoLocal();
-  await carregarDadosDoMes();
-  recuperarRascunhoLocal();
 }
 
 const btnSalvar = document.getElementById("btn-save");
@@ -277,33 +263,25 @@ btnSalvar.addEventListener("click", async () => {
     }
 
     const dados = [];
-    const linhas = document.querySelectorAll("tbody tr");
-
-    linhas.forEach((linha) => {
+    document.querySelectorAll("#tabela-alunos tr").forEach((linha) => {
       const alunoId = linha.dataset.id;
-      const inputs = linha.querySelectorAll("input");
-
-      if (inputs.length > 0) {
-        dados.push({
-          aluno_id: alunoId,
-          checkin: inputs[0].value,
-          tma: inputs[1].value.replace(",", "."),
-          interacao_matinal: inputs[2].value,
-          checkin_8: inputs[3].value,
-          analise_dados: inputs[4].checked,
-          olhar_estrategico: inputs[5].checked,
-          analise_carteira: inputs[6].checked,
-        });
-      }
+      const medalhas = [
+        ...linha.querySelectorAll("input[data-medalha-id]"),
+      ].map((input) => ({
+        medalha_id: Number(input.dataset.medalhaId),
+        checked: input.checked,
+      }));
+      dados.push({ aluno_id: alunoId, medalhas });
     });
 
     const resposta = await fetch(
-      `https://back-mais-progresso.onrender.com/resultados`,
+      "https://back-mais-progresso.onrender.com/resultados",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           coordenadorId: coordenadorIdAtual,
+          ano: ANO_ATUAL,
           mes: mesAtual,
           dados,
         }),
@@ -311,12 +289,16 @@ btnSalvar.addEventListener("click", async () => {
     );
 
     const resultado = await resposta.json();
-
     if (resposta.ok) {
       alert("Dados salvos com sucesso!");
       window.location.href = `/rota/dash_cod/dash_cod.html?mes=${encodeURIComponent(mesAtual)}`;
     } else {
-      alert("Erro ao salvar: " + (resultado.erro || "Erro desconhecido"));
+      alert(
+        "Erro ao salvar: " +
+          (resultado.erro || "Erro desconhecido") +
+          "\n" +
+          (resultado.detalhe || ""),
+      );
     }
   } catch (erro) {
     console.error("Erro ao salvar dados:", erro);

@@ -13,7 +13,8 @@
   </head>
   <body>
     <div id="titulo">
-      <h1>Bem-vindo(a) <br /><strong>Adalci Farias</strong></h1>
+      <div class="cod-image"><img src="../frontend/assets/avatares rota/" alt="">
+      <h1>Bem-vindo(a) <br /><strong>Adalci Farias</strong></h1></div>
       <img src="../frontend/assets/titulo-logo.png" />
     </div>
     <div id="filtro">
@@ -267,7 +268,7 @@
     <div class="graphics">
       <div id="title">
         <img src="../frontend/assets/que-p-eh-essa.svg" />
-        <strong>Distribuição de ranks - Alunos</strong>
+        <strong>Distribuição de rankings - Alunos</strong>
       </div>
 
       <div id="plano">
@@ -311,6 +312,102 @@
           <img id="g" src="../frontend/assets/lendarioo.png" />
         </div>
       </div>
+    </div>
+
+    
+    <div class="notific">
+      <strong id="segundo">
+        <img src="../frontend/assets/rank.png" />
+          Pódio
+      </strong>
+    </div>
+    <div id="container-podio">
+      <div class="lugar" id="segundo">
+        <div class="bloco-aluno-imagem">
+          <div>
+            <strong class="posicao">2°</strong>
+          </div>
+          <div class="aluno-imagem">
+            <!-- <img src="../frontend/assets/avatares rota/SENHAALUNO.png" alt="NOME-ALUNO"> -->
+          </div>
+        </div>
+        <span class="aluno-equipe">Aluno</span>
+        <strong class="nome">Nome</strong>
+        <div class="n-medalhas">
+          <strong class="n">X</strong>
+          <img src="../frontend/assets/medal4.svg" alt="">
+        </div>
+      </div>
+
+      
+      <div class="lugar" id="primeiro">
+        <div class="bloco-aluno-imagem">
+          <div>
+            <strong class="posicao">1°</strong>
+          </div>
+          <div class="aluno-imagem">
+            <img src="../frontend/assets/avatares rota/SENHAALUNO.png" alt="NOME-ALUNO">
+          </div>
+        </div>
+        <span class="aluno-equipe">Aluno Flora</span>
+        <strong class="nome">Nome</strong>
+        <div class="n-medalhas">
+          <strong class="n">X</strong>
+          <img src="../frontend/assets/medal4.svg" alt="">
+        </div>
+      </div>
+
+      <div class="lugar" id="terceiro">
+        <div class="bloco-aluno-imagem">
+          <div>
+            <strong class="posicao">3°</strong>
+          </div>
+          <div class="aluno-imagem">
+            <img src="../frontend/assets/avatares rota/SENHAALUNO.png" alt="NOME-ALUNO">
+          </div>
+        </div>
+        <span class="aluno-equipe">Aluno</span>
+        <strong class="nome">X</strong>
+        <div class="n-medalhas">
+          <strong class="n">X</strong>
+          <img src="../frontend/assets/medal4.svg" alt="">
+        </div>
+      </div>
+
+
+    </div>
+
+      <!-- <div id="open-overlay">
+        <strong>Selecione um time</strong>
+        <div id="opcoes">
+          <div class="opcao">
+            <div class="circ"></div>
+            Friboi
+          </div>
+          <div class="opcao">
+            <div class="circ"></div>
+            Flora
+          </div>
+          <div class="opcao">
+            <div class="circ"></div>
+            <a href="pagina.html" style="text-decoration: none; color: inherit"
+              >ALP</a
+            >
+          </div>
+          <div class="opcao">
+            <div class="circ"></div>
+            Food
+          </div>
+          <div class="opcao">
+            <a href="pagina.html">
+              <div class="circ"></div>
+            </a>
+            <a href="pagina.html" style="text-decoration: none; color: inherit"
+              >In Natura</a
+            >
+          </div>
+        </div>
+      </div> -->
     </div>
 
     <div class="notific" id="segundo">
@@ -1040,6 +1137,7 @@
             const posicao = index + 1;
             const rankNome = aluno.rank_atual || "Bronze";
             const icone = iconesRank[rankNome] || "bronzee.png";
+            const id = aluno.usuario_id;
             const timeAluno = aluno.time || "";
             const nomeAluno = aluno.nome || "Aluno sem nome";
             const medalhas = aluno.qtd_medalhas || 0;
@@ -1052,6 +1150,7 @@
               <div class="infos">
                 <div class="info1">
                   <img src="../frontend/assets/${icone}" alt="${rankNome}" />
+                  <div class="div-perfil-imagem"><img src="../frontend/assets/avatares rota/${id}.png" class="perfil-imagem" /></div>
                   <div class="div">
                     <span>${timeAluno}</span>
                     <strong>${nomeAluno}</strong>
