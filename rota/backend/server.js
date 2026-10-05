@@ -62,6 +62,8 @@ const MESES_ORDEM = [
   "Novembro",
 ];
 
+const ANO_ATUAL = 2026;
+
 async function contarAlunosDoCoordenador(coordenadorId) {
   const r = await pool.query(
     `SELECT COUNT(*) as total FROM alunos WHERE coordenador_id = $1`,
@@ -69,8 +71,6 @@ async function contarAlunosDoCoordenador(coordenadorId) {
   );
   return Number(r.rows[0].total);
 }
-
-const ANO_ATUAL = 2026; // enquanto o sistema roda só dentro de 2026
 
 async function mesCompleto(coordenadorId, mes, totalAlunos) {
   if (totalAlunos === 0) return true;
@@ -83,7 +83,7 @@ async function mesCompleto(coordenadorId, mes, totalAlunos) {
     [ANO_ATUAL, mes],
   );
   const medalhaIds = medalhasDoMes.rows.map((m) => m.id);
-  if (medalhaIds.length === 0) return false; // mês ainda sem missões cadastradas
+  if (medalhaIds.length === 0) return false;
 
   const r = await pool.query(
     `SELECT aluno_id
@@ -96,6 +96,37 @@ async function mesCompleto(coordenadorId, mes, totalAlunos) {
   );
 
   return r.rows.length === totalAlunos;
+}
+
+async function statusMeses(coordenadorId) {
+  const totalAlunos = await contarAlunosDoCoordenador(coordenadorId);
+
+  const mesesCompletos = [];
+  let mesLancavel = MESES_ORDEM[0];
+
+  for (let i = 0; i < MESES_ORDEM.length; i++) {
+    const mes = MESES_ORDEM[i];
+    const completo = await mesCompleto(coordenadorId, mes, totalAlunos);
+
+    if (completo) {
+      mesesCompletos.push(mes);
+      mesLancavel = MESES_ORDEM[i + 1] || null;
+    } else {
+      mesLancavel = mes;
+      break;
+    }
+  }
+
+  const indexLancavel = mesLancavel
+    ? MESES_ORDEM.indexOf(mesLancavel)
+    : MESES_ORDEM.length;
+  const mesesBloqueados = MESES_ORDEM.filter((_, i) => i > indexLancavel);
+
+  return {
+    mes_lancavel: mesLancavel,
+    meses_completos: mesesCompletos,
+    meses_bloqueados: mesesBloqueados,
+  };
 }
 
 // statusMeses() continua exatamente igual — só se beneficia do mesCompleto novo.
