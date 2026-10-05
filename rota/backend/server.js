@@ -364,7 +364,9 @@ app.post("/resultados", async (req, res) => {
     res.status(200).json({ mensagem: "Dados salvos com sucesso." });
   } catch (erro) {
     console.error("Erro ao salvar resultados:", erro);
-    res.status(500).json({ erro: "Erro ao salvar resultados." });
+    res
+      .status(500)
+      .json({ erro: "Erro ao salvar resultados.", detalhe: erro.message });
   }
 });
 
