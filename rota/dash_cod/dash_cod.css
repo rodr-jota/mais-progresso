@@ -25,11 +25,32 @@ body {
   background-color: #00158c;
   border-bottom-right-radius: 87px;
 }
+.cod-image {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.cod-image #background img {
+  width: 120%;
+  height: 220%;
+  object-fit: fill;
+}
+.cod-image #background {
+  background-color: white;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
 h1 {
   font-size: 30px;
   font-weight: 400;
-  margin-bottom: 24px;
   color: white;
+  margin-left: 42px;
 }
 h1 > strong {
   font-size: 70px;
@@ -128,7 +149,10 @@ h1 > strong {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: sticky;
+  position: absolute;
+  z-index: 0;
+  left: -2px;
+  top: 60px;
 }
 #container-podio .lugar .bloco-aluno-imagem .aluno-imagem img {
   width: 133px;

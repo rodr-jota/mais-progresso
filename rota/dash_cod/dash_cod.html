@@ -13,10 +13,14 @@
   </head>
   <body>
     <div id="titulo">
-      <div class="cod-image"><img src="../frontend/assets/avatares rota/" alt="">
-      <h1>Bem-vindo(a) <br /><strong>Adalci Farias</strong></h1></div>
-      <img src="../frontend/assets/titulo-logo.png" />
+  <div class="cod-image">
+    <div id="background">
+      <img id="avatar-coordenador" src="" alt="">
     </div>
+    <h1>Bem-vindo(a) <br /><strong>Adalci Farias</strong></h1>
+  </div>
+  <img src="../frontend/assets/titulo-logo.png" />
+</div>
     <div id="filtro">
       <ul id="meses">
         <li id="this">Abr</li>
@@ -557,6 +561,7 @@
             }
             if (btnTexto) {
               btnTexto.textContent = "Visualizar dados";
+              btnTexto.style.color = "#23913C";
             }
           } else {
             strong.innerHTML = `
@@ -1056,6 +1061,7 @@
               const rank = aluno.rank_atual || "Bronze";
               if (ranksExatos.hasOwnProperty(rank)) ranksExatos[rank]++;
             });
+            preencherPodio(alunos.slice(0, 3)); // Preenche o pódio com os 3 primeiros alunos
 
             const ids = [
               "bar1",
@@ -1175,6 +1181,42 @@
         }
       }
 
+      function preencherPodio(alunos) {
+  const podio = document.getElementById("container-podio");
+  if (!podio) return;
+
+  const posicoes = [
+    { seletor: "#primeiro", indice: 0 },
+    { seletor: "#segundo", indice: 1 },
+    { seletor: "#terceiro", indice: 2 },
+  ];
+
+  posicoes.forEach(({ seletor, indice }) => {
+    const lugar = podio.querySelector(seletor);
+    if (!lugar) return;
+
+    const aluno = alunos[indice];
+    if (!aluno) {
+      lugar.style.display = "none";
+      return;
+    }
+    lugar.style.display = "";
+
+    const imgDiv = lugar.querySelector(".aluno-imagem");
+    const nomeEl = lugar.querySelector(".nome");
+    const equipeEl = lugar.querySelector(".aluno-equipe");
+    const numeroEl = lugar.querySelector(".n");
+
+    const avatarId = aluno.usuario_id || aluno.id;
+    imgDiv.innerHTML = `<img src="../frontend/assets/avatares rota/${avatarId}.png" alt="${aluno.nome}" onerror="this.style.display='none'">`;
+    nomeEl.textContent = aluno.nome
+  ? aluno.nome.trim().split(/\s+/).slice(0, 2).join(" ")
+  : "Sem nome";
+    equipeEl.textContent = aluno.time || "";
+    numeroEl.textContent = aluno.qtd_medalhas ?? 0;
+  });
+}
+
       // ── Inicialização ──
       document.addEventListener("DOMContentLoaded", function () {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1208,6 +1250,13 @@
           document.querySelector("#titulo h1 strong").textContent =
             usuario.nome;
         }
+
+        const avatarImg = document.getElementById("avatar-coordenador");
+  if (avatarImg && usuario) {
+    const avatarId = usuario.usuario_id || usuario.id;
+    avatarImg.src = `../frontend/assets/avatares rota/${avatarId}.png`;
+    avatarImg.onerror = () => { avatarImg.style.display = "none"; };
+  }
 
         // ── Evento de Clique do Botão Exportar ──
         document.addEventListener("DOMContentLoaded", function () {

@@ -222,7 +222,8 @@ async function verificarStatusMes() {
 
     const btnSalvar = document.getElementById("btn-save");
     if (btnSalvar) {
-      btnSalvar.style.display = mesFechado ? "none" : "block";
+      btnSalvar.style.display = "block";
+      btnSalvar.textContent = mesFechado ? "Salvar alterações" : "Salvar";
     }
   } catch (erro) {
     console.error("Erro ao verificar status do mês:", erro);

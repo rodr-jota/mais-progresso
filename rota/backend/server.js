@@ -378,36 +378,34 @@ app.get("/coordenador/resultados/:coordenadorId", async (req, res) => {
 });
 app.post("/resultados", async (req, res) => {
   const { coordenadorId, ano, mes, dados } = req.body;
-
   if (!coordenadorId || !ano || !mes || !Array.isArray(dados)) {
     return res.status(400).json({ erro: "Dados incompletos." });
   }
-
   try {
     const status = await statusMeses(coordenadorId);
-    if (status.mes_lancavel !== mes) {
+    const podeEditar =
+      status.mes_lancavel === mes || status.meses_completos.includes(mes);
+
+    if (!podeEditar) {
       return res
         .status(403)
-        .json({ erro: "Este mês não está liberado para lançamento." });
+        .json({
+          erro: "Este mês não está liberado para lançamento ou edição.",
+        });
     }
 
     for (const linhaAluno of dados) {
       const { aluno_id, medalhas } = linhaAluno;
       if (!Array.isArray(medalhas)) continue;
-
       for (const { medalha_id, checked } of medalhas) {
         await pool.query(
-          `INSERT INTO medalha_aluno (medalha_id, aluno_id, checked, atualizado_em)
-           VALUES ($1, $2, $3, now())
-           ON CONFLICT (medalha_id, aluno_id)
-           DO UPDATE SET checked = EXCLUDED.checked, atualizado_em = now()`,
+          `INSERT INTO medalha_aluno (medalha_id, aluno_id, checked, atualizado_em) VALUES ($1, $2, $3, now())
+           ON CONFLICT (medalha_id, aluno_id) DO UPDATE SET checked = EXCLUDED.checked, atualizado_em = now()`,
           [medalha_id, aluno_id, Boolean(checked)],
         );
       }
-
       await recalcularMedalhasDoAluno(aluno_id);
     }
-
     res.status(200).json({ mensagem: "Dados salvos com sucesso." });
   } catch (erro) {
     console.error("Erro ao salvar resultados:", erro);
