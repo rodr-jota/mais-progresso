@@ -25,28 +25,26 @@ pool
     console.error(err);
   });
 
+const RANKS = [
+  "Bronze",
+  "Prata",
+  "Ouro",
+  "Platina",
+  "Diamante",
+  "Mestre",
+  "Lendário",
+];
+// Última medalha de cada faixa: Bronze 1-3, Prata 4-7, Ouro 8-11, Platina 12-15,
+// Diamante 16-19, Mestre 20-25, Lendário 26-28
+const LIMITES_RANK = [0, 3, 7, 11, 15, 19, 25, 28];
+
 function calcularRank(totalMedalhas) {
-  const ranks = [
-    "Bronze",
-    "Prata",
-    "Ouro",
-    "Platina",
-    "Diamante",
-    "Mestre",
-    "Lendário",
-  ];
-  const limiteAteMestre = 15; // 3 medalhas × 5 ranks (Bronze até Diamante)
-
-  let indice;
-  if (totalMedalhas < limiteAteMestre) {
-    indice = Math.floor(totalMedalhas / 3);
-  } else {
-    const alemDoMestre = totalMedalhas - limiteAteMestre;
-    indice = alemDoMestre >= 5 ? 6 : 5; // precisa de 5 (não 3) pra sair de Mestre
+  const total = Number(totalMedalhas) || 0;
+  let indice = 0;
+  for (let i = 1; i < RANKS.length; i++) {
+    if (total > LIMITES_RANK[i]) indice = i;
   }
-
-  if (indice > 6) indice = 6;
-  return ranks[indice];
+  return RANKS[indice];
 }
 
 // =====================
@@ -244,84 +242,83 @@ app.get("/alunos", async (req, res) => {
       params = [timeFiltro];
     }
 
+    let linhas;
+    let mesesAteFiltro = null;
+
     if (!mesFiltro) {
-      const queryAlunos = `
-        SELECT a.id, u.id AS usuario_id, u.nome, a.rank_atual, a.qtd_medalhas, a.time
-        FROM alunos a
-        JOIN usuarios u ON a.usuario_id = u.id
-        ${condicaoTime}
-        ORDER BY a.qtd_medalhas DESC, u.nome
-      `;
-      const resultado = await pool.query(queryAlunos, params);
+      const resultado = await pool.query(
+        `SELECT a.id, u.id AS usuario_id, u.nome, a.qtd_medalhas, a.time
+         FROM alunos a
+         JOIN usuarios u ON a.usuario_id = u.id
+         ${condicaoTime}
+         ORDER BY a.qtd_medalhas DESC, u.nome`,
+        params,
+      );
+      linhas = resultado.rows;
+    } else {
+      const indexMes = MESES_ORDEM.indexOf(mesFiltro);
+      if (indexMes === -1) {
+        return res.status(400).json({ erro: "Mês inválido" });
+      }
+      mesesAteFiltro = MESES_ORDEM.slice(0, indexMes + 1);
+      const paramIndexMeses = params.length + 1;
+      const paramIndexAno = params.length + 2;
 
-      const ids = resultado.rows.map((a) => a.id);
-      const saldos = await saldosMedalhaExtraEmLote(ids);
-
-      const linhasComSaldo = resultado.rows.map((aluno) => ({
-        ...aluno,
-        saldo_medalha_extra: saldos[aluno.id] || 0,
-      }));
-
-      return res.json(linhasComSaldo);
+      const resultado = await pool.query(
+        `SELECT
+           a.id,
+           u.id AS usuario_id,
+           u.nome,
+           a.time,
+           COALESCE(conquistas.total, 0) + COALESCE(resgates.total, 0) AS qtd_medalhas
+         FROM alunos a
+         JOIN usuarios u ON a.usuario_id = u.id
+         LEFT JOIN (
+           SELECT ma.aluno_id, COUNT(*) AS total
+           FROM medalha_aluno ma
+           JOIN medalha m ON m.id = ma.medalha_id
+           JOIN missao mi ON mi.id = m.id_missao
+           WHERE ma.checked = true AND mi.titulo <> 'Extra'
+             AND mi.mes = ANY($${paramIndexMeses}::text[]) AND mi.ano = $${paramIndexAno}
+           GROUP BY ma.aluno_id
+         ) conquistas ON conquistas.aluno_id = a.id
+         LEFT JOIN (
+           SELECT mr.aluno_id, COUNT(*) AS total
+           FROM medalha_resgatada mr
+           JOIN medalha m ON m.id = mr.medalha_id
+           JOIN missao mi ON mi.id = m.id_missao
+           WHERE mi.mes = ANY($${paramIndexMeses}::text[]) AND mi.ano = $${paramIndexAno}
+           GROUP BY mr.aluno_id
+         ) resgates ON resgates.aluno_id = a.id
+         ${condicaoTime}
+         ORDER BY qtd_medalhas DESC, u.nome`,
+        [...params, mesesAteFiltro, ANO_ATUAL],
+      );
+      linhas = resultado.rows;
     }
-
-    // Com mês: soma acumulada de medalhas até (e incluindo) o mês filtrado,
-    // agora lendo de medalha_aluno/medalha/missao em vez de progresso_missoes
-    const indexMes = MESES_ORDEM.indexOf(mesFiltro);
-    if (indexMes === -1) {
-      return res.status(400).json({ erro: "Mês inválido" });
-    }
-    const mesesAteFiltro = MESES_ORDEM.slice(0, indexMes + 1);
-    const paramIndexMeses = params.length + 1;
-    const paramIndexAno = params.length + 2;
-
-    const queryAlunos = `
-      SELECT
-        a.id,
-        u.id AS usuario_id,
-        u.nome,
-        a.time,
-        COALESCE(conquistas.total, 0) + COALESCE(resgates.total, 0) AS qtd_medalhas
-      FROM alunos a
-      JOIN usuarios u ON a.usuario_id = u.id
-      LEFT JOIN (
-        SELECT ma.aluno_id, COUNT(*) AS total
-        FROM medalha_aluno ma
-        JOIN medalha m ON m.id = ma.medalha_id
-        JOIN missao mi ON mi.id = m.id_missao
-        WHERE ma.checked = true AND mi.titulo <> 'Extra'
-          AND mi.mes = ANY($${paramIndexMeses}::text[]) AND mi.ano = $${paramIndexAno}
-        GROUP BY ma.aluno_id
-      ) conquistas ON conquistas.aluno_id = a.id
-      LEFT JOIN (
-        SELECT mr.aluno_id, COUNT(*) AS total
-        FROM medalha_resgatada mr
-        JOIN medalha m ON m.id = mr.medalha_id
-        JOIN missao mi ON mi.id = m.id_missao
-        WHERE mi.mes = ANY($${paramIndexMeses}::text[]) AND mi.ano = $${paramIndexAno}
-        GROUP BY mr.aluno_id
-      ) resgates ON resgates.aluno_id = a.id
-      ${condicaoTime}
-      ORDER BY qtd_medalhas DESC, u.nome
-    `;
-    params.push(mesesAteFiltro, ANO_ATUAL);
-
-    const resultado = await pool.query(queryAlunos, params);
-    const linhas = resultado.rows.map((aluno) => ({
-      ...aluno,
-      qtd_medalhas: Number(aluno.qtd_medalhas),
-      rank_atual: calcularRank(Number(aluno.qtd_medalhas)),
-    }));
 
     const ids = linhas.map((a) => a.id);
-    const saldos = await saldosMedalhaExtraEmLote(ids);
+    const saldos = await saldosMedalhaExtraEmLote(ids, mesesAteFiltro);
 
-    const linhasComSaldo = linhas.map((aluno) => ({
-      ...aluno,
-      saldo_medalha_extra: saldos[aluno.id] || 0,
-    }));
+    const linhasFinais = linhas.map((aluno) => {
+      const qtd = Number(aluno.qtd_medalhas) || 0;
+      return {
+        ...aluno,
+        qtd_medalhas: qtd,
+        rank_atual: calcularRank(qtd), // sempre calculado, não depende da coluna do banco
+        saldo_medalha_extra: saldos[aluno.id] || 0,
+      };
+    });
 
-    res.json(linhasComSaldo);
+    // Ordem final: medalhas, desempate por extras não resgatadas, depois nome
+    linhasFinais.sort(
+      (a, b) =>
+        b.qtd_medalhas - a.qtd_medalhas ||
+        b.saldo_medalha_extra - a.saldo_medalha_extra ||
+        a.nome.localeCompare(b.nome, "pt-BR"),
+    );
+
+    res.json(linhasFinais);
   } catch (erro) {
     console.error(erro);
     res.status(500).json({ erro: "Erro ao buscar alunos" });
@@ -387,11 +384,9 @@ app.post("/resultados", async (req, res) => {
       status.mes_lancavel === mes || status.meses_completos.includes(mes);
 
     if (!podeEditar) {
-      return res
-        .status(403)
-        .json({
-          erro: "Este mês não está liberado para lançamento ou edição.",
-        });
+      return res.status(403).json({
+        erro: "Este mês não está liberado para lançamento ou edição.",
+      });
     }
 
     for (const linhaAluno of dados) {
@@ -475,26 +470,35 @@ async function saldoMedalhaExtra(alunoId) {
   const total = Number(ganhas.rows[0].total) - Number(usadas.rows[0].total);
   return Math.max(total, 0); // nunca negativo, por segurança
 }
-async function saldosMedalhaExtraEmLote(idsAlunos) {
+async function saldosMedalhaExtraEmLote(idsAlunos, mesesFiltro = null) {
   if (idsAlunos.length === 0) return {};
+
+  const filtroMes = mesesFiltro
+    ? "AND mi.mes = ANY($2::text[]) AND mi.ano = $3"
+    : "";
+  const params = mesesFiltro
+    ? [idsAlunos, mesesFiltro, ANO_ATUAL]
+    : [idsAlunos];
 
   const conquistas = await pool.query(
     `SELECT ma.aluno_id, COUNT(*) AS total
      FROM medalha_aluno ma
      JOIN medalha m ON m.id = ma.medalha_id
      JOIN missao mi ON mi.id = m.id_missao
-     WHERE mi.titulo = 'Extra' AND ma.checked = true AND ma.aluno_id = ANY($1::int[])
+     WHERE mi.titulo = 'Extra' AND ma.checked = true
+       AND ma.aluno_id = ANY($1::int[]) ${filtroMes}
      GROUP BY ma.aluno_id`,
-    [idsAlunos],
+    params,
   );
   const resgates = await pool.query(
     `SELECT mr.aluno_id, COUNT(*) AS total
      FROM medalha_resgatada mr
      JOIN medalha m ON m.id = mr.medalha_id
      JOIN missao mi ON mi.id = m.id_missao
-     WHERE mi.titulo = 'Extra' AND mr.aluno_id = ANY($1::int[])
+     WHERE mi.titulo = 'Extra'
+       AND mr.aluno_id = ANY($1::int[]) ${filtroMes}
      GROUP BY mr.aluno_id`,
-    [idsAlunos],
+    params,
   );
 
   const mapaConquistas = {};

@@ -174,8 +174,10 @@ i {
 #btn-save {
   width: 100%;
   display: flex;
-  justify-content: right;
-  padding-right: 56px;
+  justify-content: center;
+  background: none;
+  color: white;
+  border: none;
 }
 #save {
   width: 120px;

@@ -321,7 +321,8 @@
     
     <div class="notific">
       <strong id="segundo">
-        <img src="../frontend/assets/rank.png" />
+        <img src="../frontend/assets/noun_Podium_8364545.svg" style="    margin-right: 9px;
+    width: 115px;"/>
           Pódio
       </strong>
     </div>
@@ -577,6 +578,8 @@
             }
             if (btnTexto) {
               btnTexto.textContent = "Atualizar dados";
+  btnTexto.style.color = "#00158c";
+
             }
           }
         } catch (err) {
@@ -650,116 +653,105 @@
       let timeSelecionado = "Geral";
 
       // ── Função 1: Carregar dados do COORDENADOR (Slider Fixo) ──
-      function calcularRankTime(totalMedalhas, numAlunos) {
-        const ranks = [
-          "Bronze",
-          "Prata",
-          "Ouro",
-          "Platina",
-          "Diamante",
-          "Mestre",
-          "Lendário",
-        ];
-        const grupoNormal = 3 * numAlunos;
-        const grupoMestre = 5 * numAlunos;
-        const limiteAteMestre = grupoNormal * 5; // total de medalhas pra alcançar o rank Mestre (índice 5)
+      const LIMITES_RANK = [0, 3, 7, 11, 15, 19, 25, 28];
 
-        let indice;
-        let medalhasNoRankAtual;
-        let tamanhoRankAtual;
+function calcularRankTime(totalMedalhas, numAlunos) {
+  const ranks = [
+    "Bronze",
+    "Prata",
+    "Ouro",
+    "Platina",
+    "Diamante",
+    "Mestre",
+    "Lendário",
+  ];
 
-        if (totalMedalhas < limiteAteMestre) {
-          indice = Math.floor(totalMedalhas / grupoNormal);
-          medalhasNoRankAtual = totalMedalhas - indice * grupoNormal;
-          tamanhoRankAtual = grupoNormal;
-        } else {
-          const alemDoMestre = totalMedalhas - limiteAteMestre;
-          if (alemDoMestre >= grupoMestre) {
-            indice = 6; // Lendário
-            medalhasNoRankAtual = grupoMestre;
-          } else {
-            indice = 5; // Mestre
-            medalhasNoRankAtual = alemDoMestre;
-          }
-          tamanhoRankAtual = grupoMestre;
-        }
+  let indice = 0;
+  for (let i = 1; i < ranks.length; i++) {
+    if (totalMedalhas > LIMITES_RANK[i] * numAlunos) indice = i;
+  }
 
-        if (indice > 6) indice = 6;
+  const tamanhoRankAtual =
+    (LIMITES_RANK[indice + 1] - LIMITES_RANK[indice]) * numAlunos;
+  const medalhasNoRankAtual = Math.min(
+    Math.max(totalMedalhas - LIMITES_RANK[indice] * numAlunos, 0),
+    tamanhoRankAtual,
+  );
 
-        return {
-          rank: ranks[indice],
-          indice,
-          medalhasNoRankAtual,
-          tamanhoRankAtual,
-        };
+  return {
+    rank: ranks[indice],
+    indice,
+    medalhasNoRankAtual,
+    tamanhoRankAtual,
+  };
+}
+
+async function carregarSliderCoordenador() {
+  try {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuario) return;
+
+    const resAlunos = await fetch(
+      `https://back-mais-progresso.onrender.com/coordenador/alunos/${usuario.id}`,
+    );
+    const alunos = await resAlunos.json();
+
+    const numAlunos = alunos.length;
+    if (numAlunos === 0) {
+      carregarGraficoTime();
+      return;
+    }
+
+    const totalMedalhasTime = alunos.reduce(
+      (soma, aluno) => soma + Number(aluno.qtd_medalhas || 0),
+      0,
+    );
+
+    const { indice, medalhasNoRankAtual, tamanhoRankAtual } =
+      calcularRankTime(totalMedalhasTime, numAlunos);
+
+    // Move o slider pro rank atual do time
+    currentIndex = indice;
+    updateSlider();
+
+    const rankKeys = [
+      "bronze",
+      "prata",
+      "ouro",
+      "platina",
+      "diamante",
+      "mestre",
+      "lendario",
+    ];
+
+    rankKeys.forEach((rankId, index) => {
+      const card = document.getElementById(rankId);
+      if (!card) return;
+      const barra = card.querySelector(".prc_filled");
+      const contador = card.querySelector(".contagem");
+      if (!barra || !contador) return;
+
+      const tamanhoDesteRank =
+        (LIMITES_RANK[index + 1] - LIMITES_RANK[index]) * numAlunos;
+
+      if (index < indice) {
+        barra.style.width = "100%";
+        contador.textContent = `${tamanhoDesteRank}/${tamanhoDesteRank}`;
+      } else if (index === indice) {
+        const porcentagem = (medalhasNoRankAtual / tamanhoRankAtual) * 100;
+        barra.style.width = `${porcentagem < 11 ? 11 : porcentagem}%`;
+        contador.textContent = `${medalhasNoRankAtual}/${tamanhoRankAtual}`;
+      } else {
+        barra.style.width = "11%";
+        contador.textContent = `0/${tamanhoDesteRank}`;
       }
-      async function carregarSliderCoordenador() {
-        try {
-          const usuario = JSON.parse(localStorage.getItem("usuario"));
-          if (!usuario) return;
+    });
 
-          const resAlunos = await fetch(
-            `https://back-mais-progresso.onrender.com/coordenador/alunos/${usuario.id}`,
-          );
-          const alunos = await resAlunos.json();
-
-          const numAlunos = alunos.length;
-          if (numAlunos === 0) {
-            carregarGraficoTime();
-            return;
-          }
-
-          const totalMedalhasTime = alunos.reduce(
-            (soma, aluno) => soma + Number(aluno.qtd_medalhas || 0),
-            0,
-          );
-
-          const { indice, medalhasNoRankAtual, tamanhoRankAtual } =
-            calcularRankTime(totalMedalhasTime, numAlunos);
-
-          // Move o slider pro rank atual do time
-          currentIndex = indice;
-          updateSlider();
-
-          const rankKeys = [
-            "bronze",
-            "prata",
-            "ouro",
-            "platina",
-            "diamante",
-            "mestre",
-            "lendario",
-          ];
-
-          rankKeys.forEach((rankId, index) => {
-            const card = document.getElementById(rankId);
-            if (!card) return;
-            const barra = card.querySelector(".prc_filled");
-            const contador = card.querySelector(".contagem");
-            if (!barra || !contador) return;
-
-            const tamanhoDesteRank =
-              index === 5 ? 5 * numAlunos : 3 * numAlunos;
-
-            if (index < indice) {
-              barra.style.width = "100%";
-              contador.textContent = `${tamanhoDesteRank}/${tamanhoDesteRank}`;
-            } else if (index === indice) {
-              const porcentagem =
-                (medalhasNoRankAtual / tamanhoRankAtual) * 100;
-              barra.style.width = `${porcentagem < 11 ? 11 : porcentagem}%`;
-              contador.textContent = `${medalhasNoRankAtual}/${tamanhoRankAtual}`;
-            } else {
-              barra.style.width = "11%";
-              contador.textContent = `0/${tamanhoDesteRank}`;
-            }
-          });
-
-          carregarGraficoTime();
-        } catch (err) {
-          console.error("Erro ao carregar slider:", err);
-        }
-      }
+    carregarGraficoTime();
+  } catch (err) {
+    console.error("Erro ao carregar slider:", err);
+  }
+}
 
       // ── Eventos de clique nos botões de equipe ──
       function configurarFiltrosTime() {

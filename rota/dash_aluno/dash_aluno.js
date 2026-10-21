@@ -184,52 +184,59 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarProgresso();
 });
 
+// ── Regra de ranks (a mesma do backend e do dash_cod) ──
+const NOMES_RANK = [
+  "bronze",
+  "prata",
+  "ouro",
+  "platina",
+  "diamante",
+  "mestre",
+  "lendario",
+];
+const LIMITES_RANK = [0, 3, 7, 11, 15, 19, 25, 28];
+
 // ── Slider de rank ──────────────────────────
 function preencherRank(dados) {
   if (!dados.aluno) return;
 
-  const ranks = [
-    "bronze",
-    "prata",
-    "ouro",
-    "platina",
-    "diamante",
-    "mestre",
-    "lendario",
-  ];
+  const medalhas = Number(dados.aluno.qtd_medalhas) || 0;
 
-  const rankAtual = dados.aluno.rank_atual.toLowerCase();
-  const medalhas = dados.aluno.qtd_medalhas;
-  const indiceRank = ranks.indexOf(rankAtual);
+  let indiceRank = 0;
+  for (let i = 1; i < NOMES_RANK.length; i++) {
+    if (medalhas > LIMITES_RANK[i]) indiceRank = i;
+  }
 
   currentIndex = indiceRank;
   updateSlider();
 
-  const LIMITE_ATE_MESTRE = 15;
-
-  ranks.forEach((rank, index) => {
-    const card = document.getElementById(rank);
+  NOMES_RANK.forEach((nome, index) => {
+    const card = document.getElementById(nome);
     if (!card) return;
 
     const barra = card.querySelector(".prc_filled");
     const contador = card.querySelector(".contagem");
     if (!barra || !contador) return;
 
-    const tamanhoDesteRank = index === 5 ? 5 : 3;
+    const tamanho = LIMITES_RANK[index + 1] - LIMITES_RANK[index];
 
     if (index < indiceRank) {
       barra.style.width = "100%";
-      contador.textContent = `${tamanhoDesteRank}/${tamanhoDesteRank}`;
+      contador.textContent = `${tamanho}/${tamanho}`;
     } else if (index === indiceRank) {
-      const medalhasNoRank =
-        index === 5 ? medalhas - LIMITE_ATE_MESTRE : medalhas - index * 3;
-
-      const porcentagem = (medalhasNoRank / tamanhoDesteRank) * 100;
+      const noRank = Math.min(
+        Math.max(medalhas - LIMITES_RANK[index], 0),
+        tamanho,
+      );
+      const porcentagem = (noRank / tamanho) * 100;
       barra.style.width = porcentagem < 11 ? "11%" : `${porcentagem}%`;
-      contador.textContent = `${medalhasNoRank}/${tamanhoDesteRank}`;
+      contador.textContent =
+        index === NOMES_RANK.length - 1
+          ? "Você chegou ao rank máximo!"
+          : `${noRank}/${tamanho}`;
     } else {
       barra.style.width = "11%";
-      contador.textContent = `0/${tamanhoDesteRank}`;
+      contador.textContent = `0/${tamanho}`;
     }
   });
 }
@@ -258,33 +265,32 @@ function renderizarMissao(containerId, medalhas) {
           <div class="mission-divider"></div>
 
           <div class="mission-right">
-            <div class="metric">
-              <div class="metric-title">${medalha.nome}</div>
-              <div class="bar">
-                <div class="bar-fill" style="--target: ${medalha.checked ? "100%" : "11%"}${estiloBarraOuro}">
-                  <span class="bar-value">${medalha.checked ? "Concluída" : "Pendente"}</span>
-                  <span class="bar-star">★</span>
-                </div>
-              </div>
-            </div>
+  <div class="metric">
+    <div class="metric-title">${medalha.nome}</div>
+    <div class="bar bar-progresso ${medalha.checked ? "full" : "empty"}">
+      <div class="bar-fill" style="--target: ${medalha.checked ? "100%" : "0%"}${estiloBarraOuro}"></div>
+      <span class="bar-value">${medalha.checked ? "100%" : "0%"}</span>
+      <span class="bar-star">★</span>
+    </div>
+  </div>
 
-            ${
-              medalha.descricao_meta
-                ? `
-            <div class="metric">
-              <div class="metric-title"></div>
-              <div class="bar">
-                <div class="bar-fill" style="--target: 100%${estiloBarraOuro}">
-                  <span class="bar-value" style="display:flex; align-items:center; gap:16px;">
-                    <img src="../frontend/assets/Group 343.svg" width="31px" style="margin-left:-24px;" alt="" />
-                    ${medalha.descricao_meta}
-                  </span>
-                </div>
-              </div>
-            </div>`
-                : ""
-            }
-          </div>
+  ${
+    medalha.descricao_meta
+      ? `
+  <div class="metric">
+    <div class="metric-title"></div>
+    <div class="bar bar-info">
+      <div class="bar-fill" style="--target: 100%${estiloBarraOuro}">
+        <span class="bar-value" style="display:flex; align-items:center; gap:16px;">
+          <img src="../frontend/assets/Group 343.svg" width="31px" style="margin-left:-24px;" alt="" />
+          ${medalha.descricao_meta}
+        </span>
+      </div>
+    </div>
+  </div>`
+      : ""
+  }
+</div>
         </div>`;
     })
     .join("");
@@ -416,5 +422,13 @@ function preencherNomeUsuario() {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   if (usuario && usuario.nome) {
     document.querySelector("#titulo h1 strong").textContent = usuario.nome;
+  }
+  const avatarImg = document.getElementById("avatar-aluno");
+  if (avatarImg && usuario) {
+    const avatarId = usuario.usuario_id || usuario.id;
+    avatarImg.src = `../frontend/assets/avatares rota/${avatarId}.png`;
+    avatarImg.onerror = () => {
+      avatarImg.style.display = "none";
+    };
   }
 }
