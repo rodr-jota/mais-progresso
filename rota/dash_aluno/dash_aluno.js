@@ -17,6 +17,7 @@ const mapaMeses = {
 };
 let mesSelecionado = "Abril";
 let medalhasAtuais = []; // lista plana de todas as medalhas do mês carregado, com flag `extra`
+let extrasDisponiveis = []; // ids das medalhas extra conquistadas e ainda não resgatadas (todos os meses)
 
 function updateSlider() {
   const cardWidth = cards[0].getBoundingClientRect().width;
@@ -106,35 +107,59 @@ async function carregarProgresso() {
   preencherNomeUsuario();
 
   const usuario = JSON.parse(localStorage.getItem("usuario"));
-  const resposta = await fetch(
-    `https://back-mais-progresso.onrender.com/progresso/${usuario.aluno_id}?ano=${ANO_ATUAL}&mes=${encodeURIComponent(mesSelecionado)}`,
-  );
+  if (!usuario || !usuario.aluno_id) {
+    alert("Não foi possível identificar o aluno. Faça login novamente.");
+    return;
+  }
 
-  const dados = await resposta.json();
-  preencherRank(dados);
-  preencherMissoes(dados);
-  verificarMedalhasExtras(dados);
+  try {
+    const resposta = await fetch(
+      `https://back-mais-progresso.onrender.com/progresso/${usuario.aluno_id}?ano=${ANO_ATUAL}&mes=${encodeURIComponent(mesSelecionado)}`,
+    );
 
-  // Se algum toggle já estava aberto, reabre os cards e reagenda a revelação das estrelas
-  [
-    { botaoId: "toggleLideranca", containerId: "containerLideranca" },
-    { botaoId: "toggleTino", containerId: "containerTino" },
-    { botaoId: "toggleExtra", containerId: "containerExtra" },
-  ].forEach(({ botaoId, containerId }) => {
-    const botao = document.getElementById(botaoId);
-    if (botao.classList.contains("open")) {
-      const cardsAtuais = [
-        ...document
-          .getElementById(containerId)
-          .querySelectorAll(".mission-card"),
-      ];
-      cardsAtuais.forEach((c) => c.classList.add("show"));
-      setTimeout(
-        () => revelarEstrelasDoContainer(cardsAtuais),
-        DURACAO_ANIMACAO_BARRA,
+    if (!resposta.ok) {
+      console.error(
+        "Erro ao carregar progresso:",
+        resposta.status,
+        await resposta.text(),
       );
+      return;
     }
-  });
+
+    const dados = await resposta.json();
+    extrasDisponiveis = dados.extras_disponiveis || [];
+
+    [preencherRank, preencherMissoes, verificarMedalhasExtras].forEach((fn) => {
+      try {
+        fn(dados);
+      } catch (erro) {
+        console.error(`Erro em ${fn.name}:`, erro);
+      }
+    });
+
+    // Se algum toggle já estava aberto, reabre os cards e reagenda a revelação das estrelas
+    [
+      { botaoId: "toggleLideranca", containerId: "containerLideranca" },
+      { botaoId: "toggleTino", containerId: "containerTino" },
+      { botaoId: "toggleExtra", containerId: "containerExtra" },
+    ].forEach(({ botaoId, containerId }) => {
+      const botao = document.getElementById(botaoId);
+      if (botao.classList.contains("open")) {
+        const cardsAtuais = [
+          ...document
+            .getElementById(containerId)
+            .querySelectorAll(".mission-card"),
+        ];
+        cardsAtuais.forEach((c) => c.classList.add("show"));
+        setTimeout(
+          () => revelarEstrelasDoContainer(cardsAtuais),
+          DURACAO_ANIMACAO_BARRA,
+        );
+      }
+    });
+  } catch (erro) {
+    console.error("Erro ao carregar progresso:", erro);
+  }
 }
 
 function configurarFiltroMes() {
@@ -157,9 +182,13 @@ function configurarFiltroMes() {
 async function aplicarBloqueioMesesAluno() {
   try {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuario || !usuario.aluno_id) return null;
+
     const resposta = await fetch(
       `https://back-mais-progresso.onrender.com/aluno/meses/${usuario.aluno_id}`,
     );
+    if (!resposta.ok) return null;
+
     const status = await resposta.json();
     const bloqueados = status.meses_bloqueados || [];
 
@@ -173,14 +202,29 @@ async function aplicarBloqueioMesesAluno() {
         li.classList.remove("bloqueado");
       }
     });
+
+    return status;
   } catch (erro) {
     console.error("Erro ao aplicar bloqueio de meses do aluno:", erro);
+    return null;
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   configurarFiltroMes();
-  aplicarBloqueioMesesAluno();
+  const status = await aplicarBloqueioMesesAluno();
+
+  // Abre no último mês já lançado para o aluno
+  const lancados = (status && status.meses_completos) || [];
+  if (lancados.length > 0) {
+    mesSelecionado = lancados[lancados.length - 1];
+    document.querySelectorAll("#meses li").forEach((li) => {
+      li.removeAttribute("id");
+      const sigla = li.textContent.trim().toUpperCase();
+      if ((mapaMeses[sigla] || sigla) === mesSelecionado) li.id = "this";
+    });
+  }
+
   carregarProgresso();
 });
 
@@ -308,13 +352,31 @@ function preencherMissoes(dados) {
     m.medalhas.map((med) => ({ ...med, extra: m.titulo === "Extra" })),
   );
 
-  renderizarMissao(
-    "containerLideranca",
-    (missaoLideranca ? missaoLideranca.medalhas : []).map((m) => ({
-      ...m,
-      extra: false,
-    })),
-  );
+  // Aviso para meses sem missão cadastrada
+  let aviso = document.getElementById("avisoSemMissao");
+  if (!aviso) {
+    aviso = document.createElement("p");
+    aviso.id = "avisoSemMissao";
+    aviso.style.cssText =
+      "font-size:28px;font-weight:300;color:#00158c;text-align:center;padding:40px 0;";
+    document.getElementById("toggles").prepend(aviso);
+  }
+  aviso.textContent = "As missões deste mês ainda não foram divulgadas.";
+  aviso.style.display = missoes.length === 0 ? "" : "none";
+
+  const botaoLideranca = document.getElementById("toggleLideranca");
+  const containerLideranca = document.getElementById("containerLideranca");
+  if (missaoLideranca && missaoLideranca.medalhas.length > 0) {
+    botaoLideranca.style.display = "";
+    renderizarMissao(
+      "containerLideranca",
+      missaoLideranca.medalhas.map((m) => ({ ...m, extra: false })),
+    );
+  } else {
+    botaoLideranca.classList.remove("open");
+    botaoLideranca.style.display = "none";
+    containerLideranca.innerHTML = "";
+  }
 
   const botaoMeio = document.getElementById("toggleTino");
   const containerMeio = document.getElementById("containerTino");
@@ -369,11 +431,9 @@ document.getElementById("nao").addEventListener("click", function () {
 
 document.getElementById("sim").addEventListener("click", async function () {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
-  const medalhaExtra = medalhasAtuais.find(
-    (m) => m.extra && m.checked && !m.resgatada,
-  );
+  const medalhaId = extrasDisponiveis[0];
 
-  if (!medalhaExtra) {
+  if (!medalhaId) {
     alert("Nenhuma medalha extra disponível para resgate.");
     popBack.style.display = "none";
     return;
@@ -386,7 +446,7 @@ document.getElementById("sim").addEventListener("click", async function () {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         alunoId: usuario.aluno_id,
-        medalhaId: medalhaExtra.id,
+        medalhaId: medalhaId,
       }),
     },
   );
@@ -403,7 +463,6 @@ document.getElementById("sim").addEventListener("click", async function () {
     alert("Erro: " + dados.erro);
   }
 });
-
 function verificarMedalhasExtras(dados) {
   const saldo = Number(dados.saldo_medalha_extra || 0);
 

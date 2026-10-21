@@ -127,6 +127,39 @@ async function statusMeses(coordenadorId) {
   };
 }
 
+// Meses visíveis para o aluno: libera em ordem enquanto o mês já tiver
+// lançamento para ele. O primeiro mês fica sempre acessível.
+async function statusMesesAluno(alunoId) {
+  const r = await pool.query(
+    `SELECT mi.mes, COUNT(ma.id) AS lancadas
+     FROM missao mi
+     JOIN medalha m ON m.id_missao = mi.id
+     LEFT JOIN medalha_aluno ma ON ma.medalha_id = m.id AND ma.aluno_id = $2
+     WHERE mi.ano = $1
+     GROUP BY mi.mes`,
+    [ANO_ATUAL, alunoId],
+  );
+
+  const lancadasPorMes = {};
+  r.rows.forEach((linha) => {
+    lancadasPorMes[linha.mes] = Number(linha.lancadas);
+  });
+
+  const mesesCompletos = [];
+  for (const mes of MESES_ORDEM) {
+    if ((lancadasPorMes[mes] || 0) > 0) {
+      mesesCompletos.push(mes);
+    } else {
+      break; // segue a ordem cronológica: para no primeiro mês sem lançamento
+    }
+  }
+
+  const ultimoIndex = Math.max(mesesCompletos.length - 1, 0);
+  const mesesBloqueados = MESES_ORDEM.filter((_, i) => i > ultimoIndex);
+
+  return { meses_completos: mesesCompletos, meses_bloqueados: mesesBloqueados };
+}
+
 // statusMeses() continua exatamente igual — só se beneficia do mesCompleto novo.
 
 async function statusMesesAluno(alunoId) {
@@ -435,41 +468,6 @@ async function recalcularMedalhasDoAluno(alunoId) {
   );
 }
 
-async function statusMesesAluno(alunoId) {
-  const mesesCompletos = [];
-
-  for (const mes of MESES_ORDEM) {
-    const r = await pool.query(
-      `SELECT 1 FROM resultados_mensais WHERE aluno_id = $1 AND mes = $2 LIMIT 1`,
-      [alunoId, mes],
-    );
-    if (r.rows.length > 0) {
-      mesesCompletos.push(mes);
-    } else {
-      break; // segue a ordem cronológica: para no primeiro mês sem dados
-    }
-  }
-
-  const ultimoIndex = mesesCompletos.length - 1;
-  const mesesBloqueados = MESES_ORDEM.filter((_, i) => i > ultimoIndex);
-
-  return { meses_completos: mesesCompletos, meses_bloqueados: mesesBloqueados };
-}
-
-async function saldoMedalhaExtra(alunoId) {
-  const ganhas = await pool.query(
-    `SELECT COUNT(*) AS total FROM progresso_missoes WHERE aluno_id = $1 AND extra1 = true`,
-    [alunoId],
-  );
-
-  const usadas = await pool.query(
-    `SELECT COALESCE(SUM(quantidade), 0) AS total FROM medalhas_extras_utilizadas WHERE aluno_id = $1`,
-    [alunoId],
-  );
-
-  const total = Number(ganhas.rows[0].total) - Number(usadas.rows[0].total);
-  return Math.max(total, 0); // nunca negativo, por segurança
-}
 async function saldosMedalhaExtraEmLote(idsAlunos, mesesFiltro = null) {
   if (idsAlunos.length === 0) return {};
 
@@ -737,29 +735,34 @@ app.get("/missao/:ano/:mes", async (req, res) => {
 });
 
 app.get("/progresso/:alunoId", async (req, res) => {
-  const { alunoId } = req.params;
+  const alunoId = Number(req.params.alunoId);
+  if (!Number.isInteger(alunoId)) {
+    return res.status(400).json({ erro: "Aluno inválido." });
+  }
+
   let { ano, mes } = req.query;
 
   try {
     const alunoResult = await pool.query(
-      `SELECT rank_atual, qtd_medalhas FROM alunos WHERE id = $1`,
+      `SELECT qtd_medalhas FROM alunos WHERE id = $1`,
       [alunoId],
     );
+    if (alunoResult.rows.length === 0) {
+      return res.status(404).json({ erro: "Aluno não encontrado." });
+    }
+    const qtdMedalhas = Number(alunoResult.rows[0].qtd_medalhas) || 0;
+    const aluno = {
+      qtd_medalhas: qtdMedalhas,
+      rank_atual: calcularRank(qtdMedalhas),
+    };
 
-    // Se o front não informar ano/mês, usa a missão mais recente cadastrada
-    if (!ano || !mes) {
-      const ultimaMissao = await pool.query(
-        `SELECT ano, mes FROM missao ORDER BY id DESC LIMIT 1`,
-      );
-      if (ultimaMissao.rows.length === 0) {
-        return res.json({
-          aluno: alunoResult.rows[0] || null,
-          missoes: [],
-          saldo_medalha_extra: 0,
-        });
-      }
-      ano = ultimaMissao.rows[0].ano;
-      mes = ultimaMissao.rows[0].mes;
+    // Sem ano/mês: usa o último mês já lançado para este aluno
+    if (!ano) ano = ANO_ATUAL;
+    if (!mes) {
+      const status = await statusMesesAluno(alunoId);
+      mes =
+        status.meses_completos[status.meses_completos.length - 1] ||
+        MESES_ORDEM[0];
     }
 
     const missoesResult = await pool.query(
@@ -812,17 +815,29 @@ app.get("/progresso/:alunoId", async (req, res) => {
         })),
     }));
 
-    const saldoMedalhaExtra = dados
-      .filter((missao) => missao.titulo === "Extra")
-      .flatMap((missao) => missao.medalhas)
-      .filter((medalha) => medalha.checked && !medalha.resgatada).length;
+    // Extras conquistadas e ainda não resgatadas, de TODOS os meses
+    const extrasResult = await pool.query(
+      `SELECT m.id AS medalha_id
+       FROM medalha_aluno ma
+       JOIN medalha m ON m.id = ma.medalha_id
+       JOIN missao mi ON mi.id = m.id_missao
+       WHERE ma.aluno_id = $1 AND ma.checked = true AND mi.titulo = 'Extra'
+         AND NOT EXISTS (
+           SELECT 1 FROM medalha_resgatada mr
+           WHERE mr.aluno_id = ma.aluno_id AND mr.medalha_id = m.id
+         )
+       ORDER BY m.id`,
+      [alunoId],
+    );
+    const extrasDisponiveis = extrasResult.rows.map((r) => r.medalha_id);
 
     res.json({
-      aluno: alunoResult.rows[0] || null,
+      aluno,
       ano,
       mes,
       missoes: dados,
-      saldo_medalha_extra: saldoMedalhaExtra,
+      saldo_medalha_extra: extrasDisponiveis.length,
+      extras_disponiveis: extrasDisponiveis,
     });
   } catch (erro) {
     console.error("Erro ao buscar progresso do aluno:", erro);
