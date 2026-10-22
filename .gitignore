@@ -1,0 +1,4 @@
+node_modules/
+rota/backend/node_modules/
+*.exe
+.env
