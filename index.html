@@ -12,27 +12,32 @@
     />
   </head>
   <body>
+    <img id="logo" src="rota/frontend/assets/header-idnex.png" alt="" />
     <div id="container">
       <div id="left">
         <h1>
           <img src="rota/frontend/assets/Group 316.png" alt="+Evolução" />
         </h1>
-        <form id="login-form" action="">
-          <div id="container-inputs">
-            <div class="inp" id="um">
-              <input type="email" id="email" placeholder="Digite seu login" />
+        <div id="form">
+          <form id="login-form" action="">
+            <div id="container-inputs">
+              <div class="inp" id="um">
+                <img src="rota/frontend/assets/email-form.svg" alt="" />
+                <input type="email" id="email" placeholder="Digite seu login" />
+              </div>
+              <div class="inp" id="dois">
+                <img src="rota/frontend/assets/lock-form.svg" alt="" />
+                <input
+                  type="password"
+                  id="senha"
+                  placeholder="Digite sua senha"
+                />
+              </div>
             </div>
-            <div class="inp" id="dois">
-              <input
-                type="password"
-                id="senha"
-                placeholder="Digite sua senha"
-              />
-            </div>
-          </div>
-          <button id="btn1" type="submit">Entrar</button>
-          <a href="#" id="forgot">Esqueci minha senha</a>
-        </form>
+            <a href="#" id="forgot">Esqueci minha senha</a>
+            <button id="btn1" type="submit">Entrar</button>
+          </form>
+        </div>
       </div>
       <div id="right"></div>
     </div>
