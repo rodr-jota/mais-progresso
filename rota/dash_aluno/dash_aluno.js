@@ -299,9 +299,9 @@ function renderizarMissao(containerId, medalhas) {
           <div class="mission-left" style="margin-top: -23px">
             <h2>Missão ${index + 1}</h2>
             <div class="medal-area">
-              <img class="medal-grey" src="../frontend/assets/medal1.svg" alt="Medalha cinza"
+              <img class="medal-grey" src="/rota/frontend/assets/medal1.svg" alt="Medalha cinza"
                    style="width:113px; opacity:${medalha.checked ? 0 : 1}" />
-              <img class="medal-blue" src="../frontend/assets/${ehExtra ? "medal3.svg" : "medal2.svg"}" alt="Medalha conquistada"
+              <img class="medal-blue" src="/rota/frontend/assets/${ehExtra ? "medal3.svg" : "medal2.svg"}" alt="Medalha conquistada"
                    style="width:113px; opacity:${medalha.checked ? 1 : 0}" />
             </div>
           </div>
@@ -326,7 +326,7 @@ function renderizarMissao(containerId, medalhas) {
     <div class="bar bar-info">
       <div class="bar-fill" style="--target: 100%${estiloBarraOuro}">
         <span class="bar-value" style="display:flex; align-items:center; gap:16px;">
-          <img src="../frontend/assets/Group 343.svg" width="31px" style="margin-left:-24px;" alt="" />
+          <img src="/rota/frontend/assets/Group 343.svg" width="31px" style="margin-left:-24px;" alt="" />
           ${medalha.descricao_meta}
         </span>
       </div>
@@ -485,7 +485,7 @@ function preencherNomeUsuario() {
   const avatarImg = document.getElementById("avatar-aluno");
   if (avatarImg && usuario) {
     const avatarId = usuario.usuario_id || usuario.id;
-    avatarImg.src = `../frontend/assets/avatares rota/${avatarId}.png`;
+    avatarImg.src = `/rota/frontend/assets/avatares rota/${avatarId}.png`;
     avatarImg.onerror = () => {
       avatarImg.style.display = "none";
     };

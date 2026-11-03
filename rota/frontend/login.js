@@ -38,11 +38,11 @@ form.addEventListener("submit", async (e) => {
 
     // Redirecionamento
     if (usuario.perfil === "coordenador") {
-      window.location.href = "rota/dash_cod/dash_cod.html";
+      window.location.href = "/rota/dash_cod/dash_cod.html";
     }
 
     if (usuario.perfil === "aluno") {
-      window.location.href = "rota/dash_aluno/dash_aluno.html";
+      window.location.href = "/rota/dash_aluno/dash_aluno.html";
     }
   } catch (erro) {
     console.error("Erro ao conectar com o servidor:", erro);
@@ -87,3 +87,4 @@ document.getElementById("forgot").addEventListener("click", async (e) => {
     alert("Erro ao conectar com o servidor.");
   }
 });
+
