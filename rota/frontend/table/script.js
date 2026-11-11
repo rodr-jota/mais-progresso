@@ -73,6 +73,9 @@ async function carregarAlunos() {
     `;
   });
 
+  // Agora que as linhas existem, as colunas têm a largura final
+  ajustarLarguraTitulos();
+
   ativarColagem();
   salvarRascunhoLocal();
   await carregarDadosDoMes();
@@ -158,6 +161,42 @@ function recuperarRascunhoLocal() {
       const valorSalvo = localStorage.getItem(chave);
       if (valorSalvo !== null) input.checked = valorSalvo === "true";
     });
+  });
+}
+
+// Ajusta a largura de cada título (Liderança / categoria do meio / Extra)
+// para cobrir exatamente as colunas de medalha da sua missão.
+function ajustarLarguraTitulos() {
+  const colunas = [...document.querySelectorAll("#cabecalho-tabela th")].slice(
+    1,
+  ); // pula "Aluno"
+  const grupos = { lideranca: [], tino: [], extra: [] };
+
+  catalogoMedalhas.forEach((medalha, i) => {
+    const th = colunas[i];
+    if (!th) return;
+    const chave =
+      medalha.titulo_missao === "Liderança"
+        ? "lideranca"
+        : medalha.titulo_missao === "Extra"
+          ? "extra"
+          : "tino";
+    grupos[chave].push(th);
+  });
+
+  Object.entries(grupos).forEach(([id, ths]) => {
+    const titulo = document.getElementById(id);
+    if (!titulo) return;
+
+    if (ths.length === 0) {
+      titulo.style.display = "none";
+      return;
+    }
+
+    titulo.style.display = "";
+    const inicio = ths[0].getBoundingClientRect().left;
+    const fim = ths[ths.length - 1].getBoundingClientRect().right;
+    titulo.style.width = `${fim - inicio}px`;
   });
 }
 

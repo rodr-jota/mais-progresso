@@ -326,7 +326,7 @@ function renderizarMissao(containerId, medalhas) {
     <div class="bar bar-info">
       <div class="bar-fill" style="--target: 100%${estiloBarraOuro}">
         <span class="bar-value" style="display:flex; align-items:center; gap:16px;">
-          <img src="/rota/frontend/assets/Group 343.svg" width="31px" style="margin-left:-24px;" alt="" />
+          <img src="/rota/frontend/assets/group 343.svg" width="31px" style="margin-left:-24px;" alt="" />
           ${medalha.descricao_meta}
         </span>
       </div>
