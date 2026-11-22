@@ -70,6 +70,9 @@ h1 > strong {
   margin-bottom: 70px;
   position: relative;
 }
+#eixo-x img {
+  width: 74px;
+}
 .notific strong {
   font-size: 33px;
   font-weight: 600;
