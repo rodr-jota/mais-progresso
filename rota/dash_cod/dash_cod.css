@@ -529,6 +529,7 @@ h2 {
   align-items: end;
   position: relative;
   left: 16px;
+  bottom: 32px;
 }
 .graphics #plano #barras .bar-col {
   height: 100%;
@@ -576,19 +577,19 @@ h2 {
   margin-right: 126px;
 }
 .graphics #plano #barras #col2 {
-  margin-right: 126px;
+  margin-right: 120px;
 }
 .graphics #plano #barras #col3 {
-  margin-right: 126px;
+  margin-right: 120px;
 }
 .graphics #plano #barras #col4 {
-  margin-right: 126px;
+  margin-right: 124px;
 }
 .graphics #plano #barras #col5 {
   margin-right: 126px;
 }
 .graphics #plano #barras #col6 {
-  margin-right: 126px;
+  margin-right: 121px;
 }
 .graphics #plano #barras #col7 {
   margin-right: 0;
@@ -597,6 +598,7 @@ h2 {
 .graphics #plano #barras #bar1 {
   background-color: #5b381c;
   height: 272px;
+  margin-left: 18px;
 }
 .graphics #plano #barras #bar2 {
   background-color: #646365;
@@ -620,14 +622,13 @@ h2 {
 .graphics #plano #eixo-x {
   display: flex;
   align-items: center;
-  gap: 112px;
+  gap: 73px;
   height: 63px;
   position: relative;
-  top: 15px;
   left: 9px;
 }
 #eixo-x img {
-  width: 110px;
+  width: 100px;
 }
 
 .notific #segundo {
