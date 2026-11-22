@@ -70,9 +70,6 @@ h1 > strong {
   margin-bottom: 70px;
   position: relative;
 }
-#eixo-x img {
-  width: 74px;
-}
 .notific strong {
   font-size: 33px;
   font-weight: 600;
@@ -539,7 +536,7 @@ h2 {
   flex-direction: column;
   align-items: center;
   justify-content: flex-end; /* empurra número + barra pro fundo, igual antes */
-  margin-right: 116px;
+  margin-right: 125px;
 }
 
 .graphics #plano #barras .bar-valor {
@@ -576,22 +573,22 @@ h2 {
 }
 
 .graphics #plano #barras #col1 {
-  margin-right: 138px;
+  margin-right: 126px;
 }
 .graphics #plano #barras #col2 {
-  margin-right: 141px;
+  margin-right: 126px;
 }
 .graphics #plano #barras #col3 {
-  margin-right: 132px;
+  margin-right: 126px;
 }
 .graphics #plano #barras #col4 {
-  margin-right: 125px;
+  margin-right: 126px;
 }
 .graphics #plano #barras #col5 {
-  margin-right: 129px;
+  margin-right: 126px;
 }
 .graphics #plano #barras #col6 {
-  margin-right: 134px;
+  margin-right: 126px;
 }
 .graphics #plano #barras #col7 {
   margin-right: 0;
@@ -629,33 +626,8 @@ h2 {
   top: 15px;
   left: 9px;
 }
-.graphics #plano #eixo-x #a {
-  width: 71px;
-  height: 72px;
-}
-.graphics #plano #eixo-x #b {
-  width: 76px;
-  height: 77px;
-}
-.graphics #plano #eixo-x #c {
-  width: 84px;
-  height: 69px;
-}
-.graphics #plano #eixo-x #d {
-  width: 55px;
-  height: 66px;
-}
-.graphics #plano #eixo-x #e {
-  width: 71px;
-  height: 59px;
-}
-.graphics #plano #eixo-x #f {
-  width: 62px;
-  height: 67px;
-}
-.graphics #plano #eixo-x #g {
-  width: 84px;
-  height: 74px;
+#eixo-x img {
+  width: 110px;
 }
 
 .notific #segundo {
